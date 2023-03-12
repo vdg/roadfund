@@ -6,14 +6,7 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract Roadfund is Ownable {
-
-
     function createRoadmap() public view {
-
-        console.log('go !');
-
-
+        console.log("go !");
     }
-
-
 }

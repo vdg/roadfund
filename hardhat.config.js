@@ -1,6 +1,11 @@
+require("@babel/register")();
+
+const dotenv = require("dotenv");
+
 require("@nomicfoundation/hardhat-toolbox");
 
-/** @type import('hardhat/config').HardhatUserConfig */
+dotenv.config();
+
 module.exports = {
   solidity: "0.8.18",
 };
