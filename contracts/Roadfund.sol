@@ -35,11 +35,27 @@ contract Roadfund is Ownable {
         // XXX debug
         string memory v = Rouge(address(proxy)).VERSION();
         console.log(
-            "deployed new roadmap on %s from Rouge version %s",
+            "deploying new roadmap on %s from Rouge version %s",
             address(proxy),
             v
         );
 
         return proxy;
+    }
+
+    // TODO: later ownership management
+    function addFeature(
+        Rouge rouge,
+        string memory name,
+        Rouge.Channel calldata channel
+    ) public {
+        (string memory uri, Rouge.Channel[] memory channels, ) = rouge
+            .getInfos();
+
+        // You can now use uri and channels variables in the rest of the function
+        console.log(uri, channels.length);
+        Rouge.Channel[] memory newChannels = new Rouge.Channel[](1);
+        newChannels[0] = channel;
+        rouge.addChannels(newChannels);
     }
 }

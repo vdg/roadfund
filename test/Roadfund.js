@@ -6,6 +6,19 @@ import Factory from "@rougenetwork/v2-core/Factory.json";
 import Rouge from "@rougenetwork/v2-core/Rouge.json";
 
 const {
+  commify,
+  parseEther,
+  parseUnits,
+  keccak256,
+  defaultAbiCoder,
+  toUtf8Bytes,
+  solidityPack,
+} = ethers.utils;
+
+export const expandToNDecimals = (s, n) =>
+  parseUnits((s + "").split(" ").join(""), n);
+
+const {
   time,
   loadFixture,
 } = require("@nomicfoundation/hardhat-network-helpers");
@@ -15,6 +28,12 @@ const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
 const metaURI = "somewhere on ipfs";
 
 describe("Roadfund", function () {
+  let rougelib;
+
+  before(async function () {
+    rougelib = await import("@rougenetwork/v2-core/rouge.mjs");
+  });
+
   const getRouge = async () => {
     let factory, rouge;
 
@@ -58,7 +77,7 @@ describe("Roadfund", function () {
   // We define a fixture to reuse the same setup in every test.
   // We use loadFixture to run this setup once, snapshot that state,
   // and reset Hardhat Network to that snapshot in every test.
-  async function deployStdFixture() {
+  async function deployRoadfund() {
     // Contracts are deployed using the first signer/account by default
     const [owner, otherAccount] = await ethers.getSigners();
 
@@ -71,23 +90,60 @@ describe("Roadfund", function () {
     return { roadfund, owner, otherAccount, factory, rouge };
   }
 
+  async function deployRoadfundAndCreateProject() {
+    const { roadfund, owner, factory, rouge, otherAccount } = await loadFixture(
+      deployRoadfund
+    );
+
+    const initCode = rouge.interface.encodeFunctionData("setup", [
+      roadfund.address,
+      metaURI,
+      [],
+      [],
+    ]);
+
+    let saltNonce = await ethers.provider.getTransactionCount(
+      otherAccount.address
+    );
+    const tx = await roadfund
+      .connect(otherAccount)
+      .createRoadmap(initCode, saltNonce);
+    const rcpt = await tx.wait();
+
+    const topic = factory.interface.getEventTopic("ProxyCreation");
+    const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
+
+    const decoded = factory.interface.decodeEventLog(
+      "ProxyCreation",
+      event.data
+    );
+
+    const roadmap = new ethers.Contract(
+      decoded.proxy,
+      Rouge.abi,
+      ethers.provider
+    );
+
+    return { roadfund, roadmap, owner, otherAccount };
+  }
+
   describe("Deployment", function () {
     it("Should set the right owner", async function () {
-      const { roadfund, owner } = await loadFixture(deployStdFixture);
+      const { roadfund, owner } = await loadFixture(deployRoadfund);
 
       return expect(await roadfund.owner()).to.equal(owner.address);
     });
   });
 
-  describe("Basic functions", function () {
+  describe("Create a new roadamp", function () {
     let roadmap;
 
     it("Should create a new roadmap contract", async function () {
       const { roadfund, owner, factory, rouge, otherAccount } =
-        await loadFixture(deployStdFixture);
+        await loadFixture(deployRoadfund);
 
       const initCode = rouge.interface.encodeFunctionData("setup", [
-        otherAccount.address,
+        roadfund.address,
         metaURI,
         [],
         [],
@@ -117,9 +173,40 @@ describe("Roadfund", function () {
     it("Can call URI on the ERC721", async function () {
       return expect(await roadmap.URI()).to.equal(metaURI);
     });
+  });
 
-    it("create a feature as a channel", async function () {
-      //const x = await roadmap.URI()
+  describe("Managing roadmap", function () {
+    let roadfund;
+    let roadmap;
+    let owner;
+
+    it("initialize project", async function () {
+      void ({ roadfund, roadmap, owner } = await loadFixture(
+        deployRoadfundAndCreateProject
+      ));
+
+      return expect(true).to.equal(true);
+
+      //return expect(decoded.singleton).to.equal(rouge.address);
+    });
+
+    it("create a feature", async function () {
+      const channel = {
+        free: false,
+        label: "Having a twin login",
+        token: ethers.constants.AddressZero,
+        amount: expandToNDecimals(1, 18),
+      };
+
+      const [owner, otherAccount] = await ethers.getSigners();
+
+      const tx = await roadfund
+        .connect(otherAccount)
+        .addFeature(
+          roadmap.address,
+          "test",
+          rougelib.abiEncodeChannel(channel)
+        );
     });
   });
 });

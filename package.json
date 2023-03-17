@@ -27,5 +27,8 @@
   "lint-staged": {
     "*.{sol}": "npx prettier --write",
     "*.{js,json,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "esm": "^3.2.25"
   }
 }

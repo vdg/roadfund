@@ -1,4 +1,11 @@
-require("@babel/register")();
+require("@babel/register")({
+  ignore: [
+    function (filepath) {
+      // don't let babel translate mjs
+      return /@rougenetwork\/v2-core\/rouge/.test(filepath);
+    },
+  ],
+});
 
 const dotenv = require("dotenv");
 
