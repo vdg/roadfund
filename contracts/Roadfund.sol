@@ -43,19 +43,25 @@ contract Roadfund is Ownable {
         return proxy;
     }
 
+    // or now only save name... later change to ipfs
+    //
+
+    mapping(Rouge => mapping(uint256 => string)) private _featureName;
+
     // TODO: later ownership management
     function addFeature(
         Rouge rouge,
         string memory name,
         Rouge.Channel calldata channel
     ) public {
-        (string memory uri, Rouge.Channel[] memory channels, ) = rouge
-            .getInfos();
+        (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
-        // You can now use uri and channels variables in the rest of the function
-        console.log(uri, channels.length);
         Rouge.Channel[] memory newChannels = new Rouge.Channel[](1);
         newChannels[0] = channel;
         rouge.addChannels(newChannels);
+
+        console.log("adding feature %s ( id =  ) ", name, channels.length);
+
+        _featureName[rouge][channels.length] = name;
     }
 }

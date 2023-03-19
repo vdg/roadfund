@@ -95,11 +95,15 @@ describe("Roadfund", function () {
       deployRoadfund
     );
 
+    const auths = [
+      { scope: rouge.interface.getSighash("acquire"), enable: true },
+    ].map((a) => rougelib.abiEncodeAuth(a));
+
     const initCode = rouge.interface.encodeFunctionData("setup", [
       roadfund.address,
       metaURI,
       [],
-      [],
+      auths,
     ]);
 
     let saltNonce = await ethers.provider.getTransactionCount(
@@ -190,7 +194,7 @@ describe("Roadfund", function () {
       //return expect(decoded.singleton).to.equal(rouge.address);
     });
 
-    it("create a feature", async function () {
+    it("create features", async function () {
       const channel = {
         free: false,
         label: "Having a twin login",
@@ -204,9 +208,47 @@ describe("Roadfund", function () {
         .connect(otherAccount)
         .addFeature(
           roadmap.address,
-          "test",
+          "feature A",
           rougelib.abiEncodeChannel(channel)
         );
+
+      const tx2 = await roadfund
+        .connect(otherAccount)
+        .addFeature(
+          roadmap.address,
+          "feature B",
+          rougelib.abiEncodeChannel(channel)
+        );
+    });
+
+    it("user X pledge 10 votes for feature B", async function () {
+      const [owner, otherAccount, userX, userY, userZ] =
+        await ethers.getSigners();
+
+      const channels = [
+        { free: false, label: "featureA", amount: expandToNDecimals(1, 18) },
+        { free: false, label: "featureB", amount: expandToNDecimals(1, 18) },
+      ];
+
+      const params = await rougelib.abiEncodeAcquire({
+        channels,
+        contract: roadmap,
+        signer: userX,
+        secret: "test",
+        acquisitions: [
+          { channelId: 0, qty: 1 },
+          { channelId: 1, qty: 10 },
+        ],
+      });
+
+      // const tx = await roadfund
+      //   .connect(userX)
+      //       .pledge(roadmap.address, 1, 10, { value: expandToNDecimals(10, 18) });
+
+      params[1].value = expandToNDecimals(11, 18);
+      console.log(params);
+
+      void (await roadmap.connect(userX).acquire(...params)).wait();
     });
   });
 });
