@@ -1,0 +1,44 @@
+{
+  "name": "app",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "playwright test",
+    "test:unit": "vitest",
+    "lint": "prettier --plugin-search-dir . --check . && eslint .",
+    "format": "prettier --ignore-path .gitignore --plugin-search-dir . --write .",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.28.1",
+    "@sveltejs/adapter-auto": "^2.0.0",
+    "@sveltejs/adapter-static": "^2.0.1",
+    "@sveltejs/kit": "^1.5.0",
+    "@web3-onboard/core": "^2.15.5",
+    "@web3-onboard/injected-wallets": "^2.8.2",
+    "@web3-onboard/walletconnect": "^2.3.2",
+    "bulma": "^0.9.4",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-svelte3": "^4.0.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.0",
+    "prettier": "^2.8.0",
+    "prettier-config-standard": "^5.0.0",
+    "prettier-plugin-svelte": "^2.8.1",
+    "svelte": "^3.54.0",
+    "svelte-ethers-store": "^2.5.13",
+    "svelte-preprocess": "^5.0.3",
+    "vite": "^4.0.0",
+    "vitest": "^0.25.3"
+  },
+  "type": "module",
+  "prettier": "prettier-config-standard",
+  "lint-staged": {
+    "*.js": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  }
+}
