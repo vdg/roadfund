@@ -1,6 +1,8 @@
 <script>
   import { getContext } from 'svelte'
 
+  import blockchain from '$lib/blockchain.js'
+
   import {
     getChainDataByChainId,
     signerAddress,
@@ -8,19 +10,15 @@
     chainData
   } from 'svelte-ethers-store'
 
-  console.log('test')
+
 </script>
-
-
-
-
 
 
 <nav class="navbar is-white topNav">
   <div class="container">
     <div class="navbar-brand">
       <a class="navbar-item" href="../">
-        <span class="is-size-6"><b>Roadfund</b></span> <img src="../images/bulma.png" width="112" height="28" class="is-hidden"/>
+        <span class="is-size-6"><b>Roadfund</b></span> <img  width="112" height="28" class="is-hidden"/>
       </a>
       <div class="navbar-burger burger" data-target="topNav">
         <span />
@@ -42,7 +40,7 @@
         <div class="navbar-item">
           <div class="field is-grouped">
             <p class="control">
-              <a class="button is-small">
+              <a class="button is-small" on:click={() => blockchain.connect()}>
                 <span class="icon">
                   <i class="fa fa-user-plus" />
                 </span>
