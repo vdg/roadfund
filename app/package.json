@@ -29,6 +29,7 @@
     "prettier": "^2.8.0",
     "prettier-config-standard": "^5.0.0",
     "prettier-plugin-svelte": "^2.8.1",
+    "sass": "^1.59.3",
     "svelte": "^3.54.0",
     "svelte-ethers-store": "^2.5.13",
     "svelte-preprocess": "^5.0.3",
