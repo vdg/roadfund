@@ -9,6 +9,13 @@
   },
   "author": "",
   "license": "GPL-3.0-or-later",
+  "exports": {
+    "./package.json": "./package.json",
+    "./Artifacts.json": {
+      "import": "./deployments/Artifacts.json",
+      "require": "./deployments/Artifacts.json"
+    }
+  },
   "devDependencies": {
     "@babel/preset-env": "^7.20.2",
     "@babel/register": "^7.21.0",
@@ -18,6 +25,7 @@
     "@rougenetwork/v2-core": "^2.1.5",
     "dotenv": "^16.0.3",
     "hardhat": "^2.13.0",
+    "hardhat-deploy": "^0.11.25",
     "husky": "^8.0.0",
     "lint-staged": "^13.2.0",
     "prettier": "^2.8.4",
