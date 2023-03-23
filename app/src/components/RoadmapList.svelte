@@ -1,8 +1,17 @@
 <script>
+  import { goto } from '$app/navigation'
+
+  import {
+    chainId
+  } from 'svelte-ethers-store'
 
   export let title
 
   export let addresses = []
+
+  const open = a => {
+    goto(`/${$chainId}:${a}/`)
+  }
 
 </script>
 
@@ -18,7 +27,7 @@
       <div class="column is-one-third">
         <div class="box">
 
-          <div class="card">
+          <div class="card" on:click={() => open(address)}>
             <div class="card-image">
               <figure class="image is-4by3">
                 <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
@@ -55,3 +64,22 @@
     </div>
   </div>
 </section>
+
+
+<style lang="scss">
+  @import '../scss/_variables.scss';
+
+
+  .card {
+
+    &:hover {
+      background-color: #eee;
+      cursor: pointer;
+      transform: scale(1.02);
+    }
+
+
+
+  }
+
+</style>

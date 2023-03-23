@@ -90,10 +90,8 @@
 
   <RoadmapList title="Roadmap saved" addresses={savedRoadmaps} />
 
-  {#key $signerAddress}
-    <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
-    >Create a roadmap</TxButton>
-  {/key}
+  <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
+  >Create a roadmap</TxButton>
 
 {:else}
 
