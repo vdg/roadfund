@@ -82,9 +82,10 @@
     </div>
   </div>
 </nav>
+
 <footer class="footer">
   <div class="container">
-    <div class="content has-text-centered">
+    <div class="content has-text-centered is-hidden">
       <div class="columns is-mobile is-centered">
         <div class="field is-grouped is-grouped-multiline">
           <div class="control">

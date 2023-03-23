@@ -1,6 +1,7 @@
 <script>
   import { getContext } from 'svelte'
   import { ethers } from 'ethers'
+  import { goto } from '$app/navigation'
 
   import {
     getChainDataByChainId,
@@ -18,6 +19,9 @@
   import blockchain from '$lib/blockchain.js'
 
   import TxButton from '$components/TxAction/Button.svelte'
+  import RoadmapList from '$components/RoadmapList.svelte'
+
+  import roadmap from '$stores/roadmap.js'
 
   const createCtx = async () => {
 
@@ -49,20 +53,44 @@
 
     console.log( roadfund.address, [ initCode, saltNonce   ])
 
+    const ifactory = new ethers.utils.Interface(Factory.abi)
+    const topic = ifactory.getEventTopic("ProxyCreation")
+
     return {
       call: roadfund.createRoadmap,
       params: [ initCode, saltNonce   ],
       onReceipt: (rcpt) => {
-        console.log('success')
+
+        const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
+        const decoded = ifactory.decodeEventLog(
+          "ProxyCreation",
+          event.data
+        )
+
+        console.log('found roadmap creation event', event, decoded)
+
+        roadmap.addRoadmap(decoded.proxy)
+        goto(`/${$chainId}:${decoded.proxy}/`)
+
+
       }
     }
 
   }
 
+  $: myRoadmaps = $roadmap.roadmapAddresses || []
+
+  $: savedRoadmaps = $roadmap.userRoadmapAddresses || []
 
 </script>
 
+
+<RoadmapList title="Your roadmaps" addresses={myRoadmaps} />
+
+<RoadmapList title="Roadmap saved" addresses={savedRoadmaps} />
+
+
 {#key $signerAddress}
-<TxButton disabled={!$signerAddress} class="button is-primary is-block is-alt is-large" submitCtx={createCtx}
+<TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
   >Create a roadmap</TxButton>
 {/key}
