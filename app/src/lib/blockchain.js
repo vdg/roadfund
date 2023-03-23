@@ -61,10 +61,7 @@ const createBlockchain = () => {
             evm.$provider
           )
           try {
-            //if (/^(filters|queryFilter)$/.test(key)) return contract[key]
-            // console.log('builder**key', key)
             const fragment = contract.interface.getFunction(key)
-            // XXX ethers.utils.FunctionFragment.isFunctionFragment( object ) ⇒ boolean
             if (fragment.type !== 'function')
               throw new Error(
                 `unknown function ${jsonInterface.contractName}.${key}`
@@ -91,10 +88,13 @@ const createBlockchain = () => {
     )
   }
 
+  const isSupported = (chainId) => !!Artifacts[chainId]
+
   return {
     connect,
     disconnect,
-    roadfund
+    roadfund,
+    isSupported
   }
 }
 

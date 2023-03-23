@@ -25,6 +25,7 @@
 
   const createCtx = async () => {
 
+    // XXX in env ...
     const rouge = new ethers.Contract(
       '0x376438641eB95A31b3AA9BD5bAe4b635577BBE74',
       Rouge.abi,
@@ -32,11 +33,9 @@
     )
     const roadfund = blockchain.roadfund($chainId)
 
-
     const auths = [
       { scope: rouge.interface.getSighash("acquire"), enable: true },
     ].map((a) => abiEncodeAuth(a));
-
 
     const initCode = rouge.interface.encodeFunctionData("setup", [
       roadfund.address,
@@ -58,7 +57,7 @@
 
     return {
       call: roadfund.createRoadmap,
-      params: [ initCode, saltNonce   ],
+      params: [ initCode, saltNonce ],
       onReceipt: (rcpt) => {
 
         const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
@@ -72,7 +71,6 @@
         roadmap.addRoadmap(decoded.proxy)
         goto(`/${$chainId}:${decoded.proxy}/`)
 
-
       }
     }
 
@@ -82,15 +80,37 @@
 
   $: savedRoadmaps = $roadmap.userRoadmapAddresses || []
 
+  $: supported = $signerAddress && blockchain.isSupported($chainId)
+
 </script>
 
+{#if $signerAddress && supported}
 
-<RoadmapList title="Your roadmaps" addresses={myRoadmaps} />
+  <RoadmapList title="Your roadmaps" addresses={myRoadmaps} />
 
-<RoadmapList title="Roadmap saved" addresses={savedRoadmaps} />
+  <RoadmapList title="Roadmap saved" addresses={savedRoadmaps} />
 
+  {#key $signerAddress}
+    <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
+    >Create a roadmap</TxButton>
+  {/key}
 
-{#key $signerAddress}
-<TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
-  >Create a roadmap</TxButton>
-{/key}
+{:else}
+
+  <section class="hero is-medium is-primary">
+    <div class="hero-body has-text-centered">
+
+      {#if $signerAddress}
+        <p class="title">
+          Sorry, non supported network
+        </p>
+      {:else}
+        <p class="title">
+          Please connect to your wallet
+        </p>
+      {/if}
+
+    </div>
+  </section>
+
+{/if}
