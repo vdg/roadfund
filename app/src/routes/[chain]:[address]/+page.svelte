@@ -14,6 +14,7 @@
   import Rouge from "@rougenetwork/v2-core/Rouge.json";
 
   import blockchain from '$lib/blockchain.js'
+  import { fromWei } from '$lib/utils.js'
 
   import { gradient } from '$lib/actions/gradient.js'
 
@@ -82,14 +83,14 @@
                 <div class="media-content">
                   <div class="content">
                     <p>
-                      0.01 eth per pledge
+                      {fromWei(feature.amount)} eth per pledge
                       <span class="tag">feature</span>
                     </p>
                   </div>
                 </div>
                 <div class="media-right is-size-3" >
                   <span class="has-text-grey"
-                  ><i class="fa fa-area-chart mr-3" />{feature.pledges} pledges</span>
+                  >{feature.pledges} pledges <i class="fa fa-area-chart ml-3" /></span>
                 </div>
               </div>
 

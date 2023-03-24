@@ -1,12 +1,14 @@
 <script>
   import { onMount } from 'svelte'
 
+  import { constants, utils, BigNumber } from 'ethers'
+
   import {
     signerAddress,
     chainId,
   } from 'svelte-ethers-store'
 
-  import { toWei } from '$lib/utils.js'
+  import { toWei, fromWei } from '$lib/utils.js'
   import blockchain from '$lib/blockchain.js'
 
   import { gradient } from '$lib/actions/gradient.js'
@@ -51,6 +53,7 @@
       onReceipt: (rcpt) => {
 
         console.log('claim done', rcpt)
+        roadmap.refresh(address)
 
         cancel()
       }
@@ -64,8 +67,8 @@
 <Modal bind:this={modal} active={!!active} noCloseButton={true}>
   <div class="modal-card is-large" use:gradient data-gradient={active}>
     <section class="modal-card-body" >
-      <h2 class="title">Claim for feature {feature.name}</h2>
-
+      <h2 class="title">{feature.name}</h2>
+      <h3 class="subtitle">Friendly warning: Make sure you're in sync with pledgers before claiming, or you might watch your funds slip away!</h3>
 
     </section>
     <footer class="modal-card-foot">
@@ -74,8 +77,8 @@
       </p>{/if}
 
       <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt" submitCtx={claim}
-      >Confirm</TxButton>
-      <button class="button is-black" on:click={cancel}>Cancel</button>
+      >Claim</TxButton>
+      <button class="button is-primary is-inverted" on:click={cancel}>Cancel</button>
 
     </footer>
   </div>

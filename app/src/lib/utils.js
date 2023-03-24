@@ -17,6 +17,11 @@ export const formatAddress = (a = '', short = true) => {
   }
 }
 
+export const fromWei = (s) => {
+  if (s == null) return ''
+  return Math.round(utils.formatEther(s) * 1e5) / 1e5
+}
+
 export const toWei = (s) => {
   let wei = utils.parseUnits((s + '').split(' ').join(''), 18)
   return wei

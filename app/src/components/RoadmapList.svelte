@@ -39,7 +39,7 @@
     {:else}
 
       <p class="subtitle mt-4">
-        well, nothing yet!
+        well, nothing yet...
       </p>
 
     {/if}

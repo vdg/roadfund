@@ -1,12 +1,14 @@
 <script>
   import { onMount } from 'svelte'
 
+  import { constants, utils, BigNumber } from 'ethers'
+
   import {
     signerAddress,
     chainId,
   } from 'svelte-ethers-store'
 
-  import { toWei } from '$lib/utils.js'
+  import { toWei, fromWei } from '$lib/utils.js'
   import blockchain from '$lib/blockchain.js'
 
   import { gradient } from '$lib/actions/gradient.js'
@@ -52,14 +54,12 @@
 
     return {
       call: roadfund.pledge,
-      params: [ address, active - 1, data.qty, { value: '10000000000000000000' } ],
+      params: [ address, active - 1, data.qty, { value: BigNumber.from(feature.amount).mul(data.qty) } ],
       onReceipt: (rcpt) => {
-
         console.log('pledge done', rcpt)
-
+        roadmap.refresh(address)
         cancel()
       }
-
     }
   }
 
@@ -69,11 +69,11 @@
 <Modal bind:this={modal} active={!!active} noCloseButton={true}>
   <div class="modal-card is-large" use:gradient data-gradient={active}>
     <section class="modal-card-body" >
-      <h2 class="title">Pledge for feature {feature.name}</h2>
+      <h2 class="title">{feature.name}</h2>
+      <h3 class="subtitle">How many tokens to you want to pledge?</h3>
 
-      <div class="column is-one-quarter">
+      <div class="column is-full">
         <div class="field">
-          <label for="qty" class="label">How many tokens to you want to pledge (cost is 0.1 per token)</label>
           <p class="control">
             <input
               id="qty"
@@ -85,6 +85,8 @@
           {#if control.error.qty}<p class="help is-danger">
             {control.error.qty}
           </p>{/if}
+          <label for="qty" class="label mt-3">Price to pay : { fromWei(BigNumber.from(feature.amount).mul(data.qty)) } e</label>
+          <h3 class="subtitle"><em>{fromWei(feature.amount)} e / token</em></h3>
         </div>
       </div>
 
@@ -96,12 +98,11 @@
 
       <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt" submitCtx={pledge}
       >Pledge</TxButton>
-      <button class="button is-black" on:click={cancel}>Cancel</button>
+      <button class="button is-primary is-inverted" on:click={cancel}>Cancel</button>
 
     </footer>
   </div>
 </Modal>
-
 
 
 <style lang="scss">

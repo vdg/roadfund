@@ -70,7 +70,7 @@
   </div>
 </nav>
 
-<section class="container mt-6">
+<section class="container is-max-widescreen mt-6 px-3">
   <slot />
 </section>
 
