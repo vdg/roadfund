@@ -3,7 +3,11 @@ import { ethers } from 'ethers'
 import { defaultEvmStores as evm } from 'svelte-ethers-store'
 
 // import { dev, browser } from '$app/environment'
+
 import Artifacts from 'contracts/Artifacts.json'
+import Rouge from '@rougenetwork/v2-core/Rouge.json'
+
+import roadmap from '$stores/roadmap.js'
 
 const noop = () => {}
 
@@ -11,6 +15,33 @@ const createBlockchain = () => {
   const connect = () => evm.setProvider()
 
   const disconnect = () => evm.disconnect()
+
+  const iRouge = new ethers.utils.Interface(Rouge.abi)
+
+  const handlers = {
+    AddedChannel: (address, fragment, event) => {
+      console.log('*** AddedChannel ***', address, fragment, event)
+      roadmap.refresh(address)
+    }
+    // UpdateAuthorization: (address, fragment, event) => {
+    //   roadmap.refresh(address)
+    // }
+  }
+
+  const handleRougeEvent =
+    (address) =>
+    async ({ topics, data }) => {
+      const fragment = iRouge.getEvent(topics[0])
+      console.log('event', address, fragment)
+      if (!handlers[fragment.name]) return
+      const event = iRouge.decodeEventLog(fragment, data, topics)
+      console.log('** DEBUG event **', fragment.name, {
+        address,
+        fragment,
+        event
+      })
+      return handlers[fragment.name](address, fragment, event)
+    }
 
   const call = async ({
     key,
@@ -93,6 +124,7 @@ const createBlockchain = () => {
   return {
     connect,
     disconnect,
+    handleRougeEvent,
     roadfund,
     isSupported
   }

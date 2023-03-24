@@ -42,7 +42,7 @@ describe('Roadfund', function () {
     })
   })
 
-  describe('Create a new roadamp', function () {
+  describe('Create a new roadmap', function () {
     let roadmap
 
     it('Should create a new roadmap contract', async function () {

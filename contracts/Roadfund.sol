@@ -107,9 +107,8 @@ contract Roadfund is Ownable {
     Rouge rouge,
     string memory name,
     uint256 amount,
-    uint256 cooling
-  ) public //Rouge.Channel calldata channel
-  {
+    uint256 cooling //Rouge.Channel calldata channel
+  ) public {
     (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
     // Check if the message sender is the roadmap creator
@@ -137,6 +136,7 @@ contract Roadfund is Ownable {
   }
 
   // Mappings to store pledge information
+  // XXX future optimisation, use total acquired ?
   mapping(Rouge => mapping(uint16 => uint16)) private _pledges;
 
   // Function to pledge funds to a specific feature
@@ -224,5 +224,39 @@ contract Roadfund is Ownable {
 
     // Revoke the acquire authorization for the closed feature
     grantFeature(rouge, channelId, false);
+  }
+
+  // Shortcut to get all infos we need onchain - aggregate Rouge instances + Roadfund
+  function getInfos(
+    Rouge rouge
+  )
+    public
+    view
+    returns (
+      string memory uri,
+      Rouge.Channel[] memory channels,
+      string[] memory names,
+      uint256[] memory cooling,
+      uint256[] memory claimedAt,
+      uint16[] memory claimedQty
+    )
+  {
+    (uri, channels, ) = rouge.getInfos();
+
+    string[] memory names_ = new string[](channels.length);
+    uint256[] memory cooling_ = new uint256[](channels.length);
+
+    uint256[] memory at_ = new uint256[](channels.length);
+    uint16[] memory qty_ = new uint16[](channels.length);
+
+    for (uint16 i = 0; i < channels.length; i++) {
+      names_[i] = _featureName[rouge][i];
+      cooling_[i] = _claimedAt[rouge][i];
+      at_[i] = _claimedQty[rouge][i];
+    }
+    names = names_;
+    cooling = cooling_;
+    claimedAt = at_;
+    claimedQty = qty_;
   }
 }

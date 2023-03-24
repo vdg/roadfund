@@ -23,7 +23,7 @@ const createStore = () => {
 
   const watch = (address) => {
     console.log('watching', address)
-    //evm.$provider.on({ address }, blockchain.handleRougeEvent(address))
+    evm.$provider.on({ address }, blockchain.handleRougeEvent(address))
   }
 
   const addRoadmap = (address) => {
@@ -73,15 +73,32 @@ const createStore = () => {
 
   const getOnchainState = async (address) => {
     if (!evm.$provider) return
-    const { uri, channels } = await blockchain
-      .rouge(evm.$chainId)(address)
-      .getInfos()
-    console.log(`ONCHAIN data for ${address}`, { uri, channels })
+
+    const roadfund = blockchain.roadfund(evm.$chainId)
+
+    const { uri, channels, cooling, names, claimedAt, claimedQty } =
+      await roadfund.getInfos(address)
+
+    const features = channels.map(({ amount, totalAcquired }, i) => ({
+      nr: i + 1,
+      amount,
+      pledges: totalAcquired,
+      cooling: cooling[i],
+      name: names[i],
+      claimedAt: claimedAt[i],
+      claimedQty: claimedQty[i]
+    }))
+
+    console.log(
+      `*** DEBUG *** data for ${address}`,
+      { uri, channels, cooling, names },
+      features
+    )
 
     assign({
       [address]: {
         uri,
-        channels,
+        features,
         _chainId: evm.$chainId,
         _address: address,
         _loaded: true

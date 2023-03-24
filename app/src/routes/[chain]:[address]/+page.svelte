@@ -15,12 +15,16 @@
 
   import blockchain from '$lib/blockchain.js'
 
+  import { gradient } from '$lib/actions/gradient.js'
+
   import AddFeature from '$components/AddFeature.svelte'
 
   import roadmap from '$stores/roadmap.js'
 
   export let data
   $: ({ chain, address } = data)
+
+  $: live = $roadmap[address] || {}
 
   $: supported = $signerAddress && blockchain.isSupported($chainId)
 
@@ -85,144 +89,39 @@
     </div>
     <div class="column is-9">
       <div class="box content">
-        <article class="post">
-          <h4>Bulma: How do you center a button in a box?</h4>
+
+        {#if live.features && live.features.length}
+          {#each live.features as feature}
+
+        <article class="post mt-3">
+          <h4>{feature.name}</h4>
           <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
+            <div class="square-left mr-5" use:gradient data-gradient={feature.nr}>
+              <span class="number">{feature.nr}</span>
             </div>
             <div class="media-content">
               <div class="content">
                 <p>
-                  <a href="#">@jsmith</a> replied 34 minutes ago &nbsp;
-                  <span class="tag">Question</span>
+                  0.01 eth per pledge
+                  <span class="tag">feature</span>
                 </p>
               </div>
             </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 1</span>
+            <div class="media-right is-size-3" >
+              <span class="has-text-grey"
+              ><i class="fa fa-area-chart mr-3" />{feature.pledges}</span>
             </div>
           </div>
+
+          <button class="mt-4 button is-primary is-outlined is-block is-small" on:click={() => {pledgeActive = !pledgeActive}}>Pledge for that feature</button>
+          <button class="mt-4 button is-primary is-outlined is-block is-small" on:click={() => {pledgeActive = !pledgeActive}}>Pledge for that feature</button>
+
         </article>
-        <article class="post">
-          <h4>How can I make a bulma button go full width?</h4>
-          <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <a href="#">@red</a> replied 40 minutes ago &nbsp;
-                  <span class="tag">Question</span>
-                </p>
-              </div>
-            </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 0</span>
-            </div>
-          </div>
-        </article>
-        <article class="post">
-          <h4>
-            TypeError: Data must be a string or a buffer when trying touse
-            vue-bulma-tabs
-          </h4>
-          <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <a href="#">@jsmith</a> replied 53 minutes ago &nbsp;
-                  <span class="tag">Question</span>
-                </p>
-              </div>
-            </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 13</span>
-            </div>
-          </div>
-        </article>
-        <article class="post">
-          <h4>How to vertically center elements in Bulma?</h4>
-          <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <a href="#">@brown</a> replied 3 hours ago &nbsp;
-                  <span class="tag">Question</span>
-                </p>
-              </div>
-            </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 2</span>
-            </div>
-          </div>
-        </article>
-        <article class="post">
-          <h4>
-            I'm trying to use hamburger menu on bulma css, but it doesn't work.
-            What is wrong?
-          </h4>
-          <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <a href="#">@hamburgler</a> replied 5 hours ago &nbsp;
-                  <span class="tag">Question</span>
-                </p>
-              </div>
-            </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 2</span>
-            </div>
-          </div>
-        </article>
-        <article class="post">
-          <h4>How to make tiles wrap with Bulma CSS?</h4>
-          <div class="media">
-            <div class="media-left">
-              <p class="image is-32x32">
-                <img src="http://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  <a href="#">@rapper</a> replied 3 hours ago &nbsp;
-                  <span class="tag">Question</span>
-                </p>
-              </div>
-            </div>
-            <div class="media-right">
-              <span class="has-text-grey-light"
-              ><i class="fa fa-comments" /> 2</span>
-            </div>
-          </div>
-        </article>
+
+        {/each}
+        {/if}
+
+
       </div>
     </div>
   </div>
@@ -247,3 +146,35 @@
   </section>
 
 {/if}
+
+
+
+<style lang="scss">
+
+  @import '../../scss/_variables.scss';
+
+
+  .media {
+
+    .square-left {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 48px;
+      height: 100%;
+
+      .number {
+        display: block;
+        font-size: 24px;
+        margin: 0;
+        background: transparent;
+        color: #fff;
+        text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
+      }
+
+    }
+
+  }
+
+
+</style>

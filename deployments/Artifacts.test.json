@@ -5,7 +5,7 @@
       "chainId": "1337",
       "contracts": {
         "Roadfund": {
-          "address": "0x782a293942cf250Ef9d066E97A887FfC5c7748C9",
+          "address": "0x9881575d31a2739A5a22c17cd031A894d17cA83b",
           "abi": [
             {
               "inputs": [
@@ -206,6 +206,77 @@
                 }
               ],
               "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "contract Rouge",
+                  "name": "rouge",
+                  "type": "address"
+                }
+              ],
+              "name": "getInfos",
+              "outputs": [
+                {
+                  "internalType": "string",
+                  "name": "uri",
+                  "type": "string"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint48",
+                      "name": "supply",
+                      "type": "uint48"
+                    },
+                    {
+                      "internalType": "uint48",
+                      "name": "totalAcquired",
+                      "type": "uint48"
+                    },
+                    {
+                      "internalType": "uint48",
+                      "name": "totalRedeemed",
+                      "type": "uint48"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "token",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "amount",
+                      "type": "uint256"
+                    }
+                  ],
+                  "internalType": "struct Rouge.Channel[]",
+                  "name": "channels",
+                  "type": "tuple[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "names",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "cooling",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "uint256[]",
+                  "name": "claimedAt",
+                  "type": "uint256[]"
+                },
+                {
+                  "internalType": "uint16[]",
+                  "name": "claimedQty",
+                  "type": "uint16[]"
+                }
+              ],
+              "stateMutability": "view",
               "type": "function"
             },
             {
