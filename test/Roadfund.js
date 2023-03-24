@@ -1,15 +1,15 @@
-import hre from "hardhat";
+import hre from 'hardhat'
 
-import { expect } from "chai";
+import { expect } from 'chai'
 
-import Factory from "@rougenetwork/v2-core/Factory.json";
-import Rouge from "@rougenetwork/v2-core/Rouge.json";
+import Factory from '@rougenetwork/v2-core/Factory.json'
+import Rouge from '@rougenetwork/v2-core/Rouge.json'
 
 import {
   getRouge,
   deployRoadfund,
-  deployRoadfundAndCreateProject,
-} from "./fixatures";
+  deployRoadfundAndCreateProject
+} from './fixatures'
 
 const {
   commify,
@@ -18,139 +18,139 @@ const {
   keccak256,
   defaultAbiCoder,
   toUtf8Bytes,
-  solidityPack,
-} = ethers.utils;
+  solidityPack
+} = ethers.utils
 
 export const expandToNDecimals = (s, n) =>
-  parseUnits((s + "").split(" ").join(""), n);
+  parseUnits((s + '').split(' ').join(''), n)
 
 const {
   time,
-  loadFixture,
-} = require("@nomicfoundation/hardhat-network-helpers");
+  loadFixture
+} = require('@nomicfoundation/hardhat-network-helpers')
 
-const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
+const { anyValue } = require('@nomicfoundation/hardhat-chai-matchers/withArgs')
 
-const metaURI = "somewhere on ipfs";
+const metaURI = 'somewhere on ipfs'
 
-describe("Roadfund", function () {
-  describe("Deployment", function () {
-    it("Should set the right owner", async function () {
-      const { roadfund, owner } = await loadFixture(deployRoadfund);
+describe('Roadfund', function () {
+  describe('Deployment', function () {
+    it('Should set the right owner', async function () {
+      const { roadfund, owner } = await loadFixture(deployRoadfund)
 
-      return expect(await roadfund.owner()).to.equal(owner.address);
-    });
-  });
+      return expect(await roadfund.owner()).to.equal(owner.address)
+    })
+  })
 
-  describe("Create a new roadamp", function () {
-    let roadmap;
+  describe('Create a new roadamp', function () {
+    let roadmap
 
-    it("Should create a new roadmap contract", async function () {
+    it('Should create a new roadmap contract', async function () {
       const { roadfund, owner, factory, rouge, creator } = await loadFixture(
         deployRoadfund
-      );
+      )
 
       const tx = await roadfund
         .connect(creator)
-        .createRoadmap(metaURI, owner.address);
-      const rcpt = await tx.wait();
+        .createRoadmap(metaURI, owner.address)
+      const rcpt = await tx.wait()
 
-      const topic = factory.interface.getEventTopic("ProxyCreation");
-      const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
+      const topic = factory.interface.getEventTopic('ProxyCreation')
+      const event = rcpt.events.filter((e) => e.topics[0] === topic)[0]
 
       const decoded = factory.interface.decodeEventLog(
-        "ProxyCreation",
+        'ProxyCreation',
         event.data
-      );
+      )
 
-      roadmap = new ethers.Contract(decoded.proxy, Rouge.abi, ethers.provider);
+      roadmap = new ethers.Contract(decoded.proxy, Rouge.abi, ethers.provider)
 
-      return expect(decoded.singleton).to.equal(rouge.address);
-    });
+      return expect(decoded.singleton).to.equal(rouge.address)
+    })
 
-    it("Can call URI on the ERC721", async function () {
-      return expect(await roadmap.URI()).to.equal(metaURI);
-    });
-  });
+    it('Can call URI on the ERC721', async function () {
+      return expect(await roadmap.URI()).to.equal(metaURI)
+    })
+  })
 
-  describe("Using roadmap", function () {
-    let roadfund;
-    let roadmap;
-    let owner;
-    let rougelib;
+  describe('Using roadmap', function () {
+    let roadfund
+    let roadmap
+    let owner
+    let rougelib
 
-    it("initialize project", async function () {
+    it('initialize project', async function () {
       void ({ roadfund, roadmap, owner, rougelib } = await loadFixture(
         deployRoadfundAndCreateProject
-      ));
+      ))
 
-      return expect(true).to.equal(true);
+      return expect(true).to.equal(true)
 
       //return expect(decoded.singleton).to.equal(rouge.address);
-    });
+    })
 
-    it("create features", async function () {
+    it('create features', async function () {
       const channel = {
         free: false,
-        label: "Having a twin login",
+        label: 'Having a twin login',
         token: ethers.constants.AddressZero,
-        amount: expandToNDecimals(1, 18),
-      };
+        amount: expandToNDecimals(1, 18)
+      }
 
-      const [owner, creator] = await ethers.getSigners();
+      const [owner, creator] = await ethers.getSigners()
 
       const tx = await roadfund.connect(creator).addFeature(
         roadmap.address,
-        "feature A",
+        'feature A',
         60 * 10, // 10 minutes cooling period
         rougelib.abiEncodeChannel(channel)
-      );
+      )
 
       const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
-        "feature B",
+        'feature B',
         60 * 10, // 10 minutes cooling period
         rougelib.abiEncodeChannel(channel)
-      );
-    });
+      )
+    })
 
-    it("user X acquire 10 (direct)", async function () {
-      const [owner, creator, userX, userY, userZ] = await ethers.getSigners();
+    it('user X acquire 10 (direct)', async function () {
+      const [owner, creator, userX, userY, userZ] = await ethers.getSigners()
 
       const channels = [
-        { free: false, label: "featureA", amount: expandToNDecimals(1, 18) },
-        { free: false, label: "featureB", amount: expandToNDecimals(1, 18) },
-      ];
+        { free: false, label: 'featureA', amount: expandToNDecimals(1, 18) },
+        { free: false, label: 'featureB', amount: expandToNDecimals(1, 18) }
+      ]
 
       const params = await rougelib.abiEncodeAcquire({
         channels,
         contract: roadmap,
         signer: userX,
-        secret: "test",
+        secret: 'test',
         acquisitions: [
           { channelId: 0, qty: 1 },
-          { channelId: 1, qty: 10 },
-        ],
-      });
+          { channelId: 1, qty: 10 }
+        ]
+      })
 
       // const tx = await roadfund
       //   .connect(userX)
       //       .pledge(roadmap.address, 1, 10, { value: expandToNDecimals(10, 18) });
 
-      params[1].value = expandToNDecimals(11, 18);
-      console.log(params);
+      params[1].value = expandToNDecimals(11, 18)
+      console.log(params)
 
-      void (await roadmap.connect(userX).acquire(...params)).wait();
-    });
+      void (await roadmap.connect(userX).acquire(...params)).wait()
+    })
 
-    it("user X pledge 10 votes for feature A", async function () {
-      const [owner, creator, userX, userY, userZ] = await ethers.getSigners();
+    it('user X pledge 10 votes for feature A', async function () {
+      const [owner, creator, userX, userY, userZ] = await ethers.getSigners()
 
       const tx = await roadfund
         .connect(userX)
-        .pledge(roadmap.address, 0, 10, { value: expandToNDecimals(11, 18) });
+        .pledge(roadmap.address, 0, 10, { value: expandToNDecimals(11, 18) })
 
-      const rcpt = await tx.wait();
-    });
-  });
-});
+      const rcpt = await tx.wait()
+    })
+  })
+})
