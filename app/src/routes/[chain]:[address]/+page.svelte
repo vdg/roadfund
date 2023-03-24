@@ -15,46 +15,12 @@
 
   import blockchain from '$lib/blockchain.js'
 
-
   import AddFeature from '$components/AddFeature.svelte'
 
   import roadmap from '$stores/roadmap.js'
 
   export let data
   $: ({ chain, address } = data)
-
-
-  const addFeatureCtx = async () => {
-
-    const roadfund = blockchain.roadfund($chainId)
-
-    const ifactory = new ethers.utils.Interface(Factory.abi)
-    const topic = ifactory.getEventTopic("ProxyCreation")
-
-    return {
-      call: roadfund..addFeature,
-      params: [ address, 'feature A', 60 * 10 ],
-      onReceipt: (rcpt) => {
-
-        const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
-        const decoded = ifactory.decodeEventLog(
-          "ProxyCreation",
-          event.data
-        )
-
-        console.log('found roadmap creation event', event, decoded)
-
-        roadmap.addRoadmap(decoded.proxy)
-        goto(`/${$chainId}:${decoded.proxy}/`)
-
-      }
-    }
-
-  }
-
-  $: myRoadmaps = $roadmap.roadmapAddresses || []
-
-  $: savedRoadmaps = $roadmap.userRoadmapAddresses || []
 
   $: supported = $signerAddress && blockchain.isSupported($chainId)
 
@@ -64,9 +30,9 @@
 
 </script>
 
-{#if $signerAddress && supported}
+{#if $signerAddress && supported && address}
 
-  <AddFeature bind:active={addActive} />
+  <AddFeature bind:active={addActive} {address} />
 
   <div class="columns">
     <div class="column is-3">

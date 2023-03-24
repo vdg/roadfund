@@ -5,7 +5,7 @@
       "chainId": "1337",
       "contracts": {
         "Roadfund": {
-          "address": "0x1F1E1799a9909f1736C33aA4574Af2e4d8bc64C4",
+          "address": "0x782a293942cf250Ef9d066E97A887FfC5c7748C9",
           "abi": [
             {
               "inputs": [
@@ -83,6 +83,19 @@
             },
             {
               "inputs": [],
+              "name": "NFT_LIMIT",
+              "outputs": [
+                {
+                  "internalType": "uint48",
+                  "name": "",
+                  "type": "uint48"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "_factory",
               "outputs": [
                 {
@@ -121,40 +134,13 @@
                 },
                 {
                   "internalType": "uint256",
-                  "name": "cooling",
+                  "name": "amount",
                   "type": "uint256"
                 },
                 {
-                  "components": [
-                    {
-                      "internalType": "uint48",
-                      "name": "supply",
-                      "type": "uint48"
-                    },
-                    {
-                      "internalType": "uint48",
-                      "name": "totalAcquired",
-                      "type": "uint48"
-                    },
-                    {
-                      "internalType": "uint48",
-                      "name": "totalRedeemed",
-                      "type": "uint48"
-                    },
-                    {
-                      "internalType": "address",
-                      "name": "token",
-                      "type": "address"
-                    },
-                    {
-                      "internalType": "uint256",
-                      "name": "amount",
-                      "type": "uint256"
-                    }
-                  ],
-                  "internalType": "struct Rouge.Channel",
-                  "name": "channel",
-                  "type": "tuple"
+                  "internalType": "uint256",
+                  "name": "cooling",
+                  "type": "uint256"
                 }
               ],
               "name": "addFeature",
@@ -216,6 +202,24 @@
                 {
                   "internalType": "contract RougeProxy",
                   "name": "proxy",
+                  "type": "address"
+                }
+              ],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "getRouge",
+              "outputs": [
+                {
+                  "internalType": "address",
+                  "name": "factory",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "singleton",
                   "type": "address"
                 }
               ],

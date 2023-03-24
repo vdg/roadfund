@@ -4,10 +4,14 @@
   import {     signerAddress,
          chainId, chainData } from 'svelte-ethers-store'
 
+  import { toWei } from '$lib/utils.js'
+  import blockchain from '$lib/blockchain.js'
+
   import Modal from '$components/Modal.svelte'
   import TxButton from '$components/TxAction/Button.svelte'
 
   export let active
+  export let address
 
   let modal
 
@@ -19,7 +23,11 @@
     error: {}
   }
 
-  export const add = async () => {
+  const cancel = async () => {
+    if (modal) modal.close()
+  }
+
+  export const add = () => {
     control.error = {}
 
     if (!data.pledge) {
@@ -29,12 +37,24 @@
       control.error.description = 'This field is required'
     }
 
+    if (Object.keys(control.error).length) return false
 
-    return true
-  }
+    const roadfund = blockchain.roadfund($chainId)
 
-  const cancel = async () => {
-    if (modal) modal.close()
+
+    console.log(roadfund, 'calling addFeature', address )
+
+    return {
+      call: roadfund.addFeature,
+      params: [ address, 'feature A', toWei(data.pledge), 60 * 10 ],
+      onReceipt: (rcpt) => {
+
+        console.log('found roadmap creation event', rcpt)
+
+        cancel()
+      }
+
+    }
   }
 
 </script>
@@ -84,7 +104,7 @@
 
     </section>
     <footer class="modal-card-foot">
-      {#if control.hasErrors}<p class="help is-danger pr-3">
+      {#if Object.keys(control.error).length}<p class="help is-danger pr-3">
         Please fix errors above
       </p>{/if}
 
