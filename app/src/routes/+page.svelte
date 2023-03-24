@@ -19,6 +19,7 @@
 
   import TxButton from '$components/TxAction/Button.svelte'
   import RoadmapList from '$components/RoadmapList.svelte'
+  import Unsupported from '$components/Unsupported.svelte'
 
   import roadmap from '$stores/roadmap.js'
 
@@ -78,15 +79,7 @@
   <section class="hero is-medium is-primary">
     <div class="hero-body has-text-centered">
 
-      {#if $signerAddress}
-        <p class="title">
-          Sorry, non supported network
-        </p>
-      {:else}
-        <p class="title">
-          Fancy linking up with your wallet to start?
-        </p>
-      {/if}
+      <Unsupported />
 
     </div>
   </section>

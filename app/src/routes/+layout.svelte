@@ -24,10 +24,10 @@
         <img width="112" height="28" class="is-hidden" />
       </a>
       <div class="navbar-burger burger" class:is-active={menu}         on:click={() => {
-          menu = !menu
-        }}
+                                                                                menu = !menu
+                                                                                }}
 
-                  data-target="topNav">
+           data-target="topNav">
         <span />
         <span />
         <span />
@@ -101,7 +101,7 @@
               <a
                 class="tag is-link"
                 href="https://github.com/BulmaTemplates/bulma-templates"
-                >Bulma Templates</a>
+              >Bulma Templates</a>
               <span class="tag is-light">Daniel Supernault</span>
             </div>
           </div>
@@ -109,7 +109,7 @@
             <div class="tags has-addons">
               <a class="tag is-link">The source code is licensed</a>
               <span class="tag is-light"
-                >MIT &nbsp;<i class="fa fa-github" /></span>
+              >MIT &nbsp;<i class="fa fa-github" /></span>
             </div>
           </div>
         </div>
@@ -130,9 +130,6 @@
 
   $primary: #000;
   $primary-hover: #fff;
-
-  $secondary: rgb(93, 0, 0);
-  $secondary-hover: #fff;
 
   .button {
     font-weight: $weight-semibold;
@@ -159,24 +156,7 @@
       }
     }
 
-    &.is-secondary {
-      background-color: $secondary;
-      &:hover,
-      &.is-hovered {
-        background-color: $secondary-hover;
-      }
-      &.is-inverted {
-        background-color: transparent;
-        border-color: $secondary;
-        color: $secondary;
-        &:hover,
-        &.is-hovered {
-          background-color: transparent;
-          border-color: $secondary-hover;
-          color: $secondary-hover;
-        }
-      }
-    }
+
   }
 
 

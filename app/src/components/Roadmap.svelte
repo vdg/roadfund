@@ -5,14 +5,11 @@
   import { formatAddress } from '$lib/utils.js'
 
   export let address
-  export let onclick
-
 
 </script>
 
-
 <div class="box">
-  <div class="card" on:click={() => open(address)}>
+  <div class="card" on:click>
     <div class="card-image">
       <figure class="image is-4by3">
         <img src="https://unsplash.it/1200/960" alt="Placeholder image">

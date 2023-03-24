@@ -19,6 +19,8 @@
 
   import roadmap from '$stores/roadmap.js'
 
+  import Unsupported from '$components/Unsupported.svelte'
+  import Roadmap from '$components/Roadmap.svelte'
   import AddFeature from '$components/AddFeature.svelte'
   import Pledge from '$components/Pledge.svelte'
   import Claim from '$components/Claim.svelte'
@@ -43,40 +45,13 @@
   <Claim bind:active={claimActive} {address} />
 
   <div class="columns">
-    <div class="column is-3">
+    <div class="column is-4">
 
-      <div class="card" on:click={() => open(address)}>
-        <div class="card-image">
-          <figure class="image is-4by3">
-            <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-          </figure>
-        </div>
-        <div class="card-content">
-          <div class="media">
-            <div class="media-left">
-              <figure class="image is-48x48">
-                <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-              </figure>
-            </div>
-            <div class="media-content">
-              <p class="title is-4">John Smith</p>
-              <p class="subtitle is-6">@johnsmith</p>
-            </div>
-          </div>
-
-          <div class="content">
-            Lorem ipsum dolor
-            Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-            <a href="#">#css</a> <a href="#">#responsive</a>
-            <br>
-            <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-          </div>
-        </div>
-      </div>
+      <Roadmap {address}   />
 
       <button class="mt-4 button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
 
-      <aside class="menu">
+      <aside class="menu mt-6">
         <p class="menu-label">Tags</p>
         <ul class="menu-list">
           <li><span class="tag is-primary is-medium ">Dashboard</span></li>
@@ -91,41 +66,50 @@
         </ul>
       </aside>
     </div>
-    <div class="column is-9">
 
-        {#if live.features && live.features.length}
-          {#each live.features as feature}
+    <div class="column is-8">
 
-      <div class="box content mb-3">
-        <article class="post ">
-          <h4>{feature.name}</h4>
-          <div class="media">
-            <div class="square-left mr-5" use:gradient data-gradient={feature.nr}>
-              <span class="number">{feature.nr}</span>
-            </div>
-            <div class="media-content">
-              <div class="content">
-                <p>
-                  0.01 eth per pledge
-                  <span class="tag">feature</span>
-                </p>
+      {#if live.features && live.features.length}
+        {#each live.features as feature}
+
+          <div class="box content mb-3">
+            <article class="post ">
+              <h4>{feature.name}</h4>
+              <div class="media">
+                <div class="square-left mr-5" use:gradient data-gradient={feature.nr}>
+                  <span class="number">{feature.nr}</span>
+                </div>
+                <div class="media-content">
+                  <div class="content">
+                    <p>
+                      0.01 eth per pledge
+                      <span class="tag">feature</span>
+                    </p>
+                  </div>
+                </div>
+                <div class="media-right is-size-3" >
+                  <span class="has-text-grey"
+                  ><i class="fa fa-area-chart mr-3" />{feature.pledges} pledges</span>
+                </div>
               </div>
-            </div>
-            <div class="media-right is-size-3" >
-              <span class="has-text-grey"
-              ><i class="fa fa-area-chart mr-3" />{feature.pledges} pledges</span>
-            </div>
+
+              <nav class="level">
+                <div class="level-right">
+                  <div class="level-item">
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
+                  </div>
+                  <div class="level-item">
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
+                  </div>
+                </div>
+              </nav>
+
+
+            </article>
           </div>
 
-          <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
-
-          <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
-
-        </article>
-      </div>
-
         {/each}
-        {/if}
+      {/if}
 
 
     </div>
@@ -137,15 +121,7 @@
   <section class="hero is-medium is-primary">
     <div class="hero-body has-text-centered">
 
-      {#if $signerAddress}
-        <p class="title">
-          Sorry, non supported network
-        </p>
-      {:else}
-        <p class="title">
-          Please connect to your wallet
-        </p>
-      {/if}
+      <Unsupported />
 
     </div>
   </section>
