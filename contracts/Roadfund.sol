@@ -234,6 +234,7 @@ contract Roadfund is Ownable {
     view
     returns (
       string memory uri,
+      bool isCreator,
       Rouge.Channel[] memory channels,
       string[] memory names,
       uint256[] memory cooling,
@@ -242,6 +243,12 @@ contract Roadfund is Ownable {
     )
   {
     (uri, channels, ) = rouge.getInfos();
+
+    isCreator = rouge.hasRole(
+      _msgSender(),
+      this.createRoadmap.selector,
+      CHANNEL_LIMIT
+    );
 
     string[] memory names_ = new string[](channels.length);
     uint256[] memory cooling_ = new uint256[](channels.length);

@@ -5,7 +5,7 @@
       "chainId": "1337",
       "contracts": {
         "Roadfund": {
-          "address": "0x9881575d31a2739A5a22c17cd031A894d17cA83b",
+          "address": "0xce6D82175F15323aae177C80e8cF34be7A58039c",
           "abi": [
             {
               "inputs": [
@@ -222,6 +222,11 @@
                   "internalType": "string",
                   "name": "uri",
                   "type": "string"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "isCreator",
+                  "type": "bool"
                 },
                 {
                   "components": [

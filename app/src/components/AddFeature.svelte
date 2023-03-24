@@ -33,6 +33,7 @@
     if (!data.pledge) {
       control.error.pledge = 'This field is required'
     }
+
     if (!data.description) {
       control.error.description = 'This field is required'
     }
@@ -41,12 +42,9 @@
 
     const roadfund = blockchain.roadfund($chainId)
 
-
-    console.log(roadfund, 'calling addFeature', address )
-
     return {
       call: roadfund.addFeature,
-      params: [ address, 'feature A', toWei(data.pledge), 60 * 10 ],
+      params: [ address, data.description, toWei(data.pledge), 60 * 10 ],
       onReceipt: (rcpt) => {
 
         console.log('found roadmap creation event', rcpt)

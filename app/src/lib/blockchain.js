@@ -55,9 +55,9 @@ const createBlockchain = () => {
     try {
       const overrides = {}
       if (estimateGas && key) {
-        const estimate = await estimateGas[key](...params)
-        overrides.gasLimit = estimate.add(2000)
-        console.log('estimate', key, estimate + '', overrides)
+        // const estimate = await estimateGas[key](...params)
+        // overrides.gasLimit = estimate.add(2000)
+        // console.log('estimate', key, estimate + '', overrides)
       }
       if (
         params.length > 0 &&
@@ -103,8 +103,8 @@ const createBlockchain = () => {
               call({
                 ...o,
                 key,
-                method: contract.connect(evm.$signer)[key],
-                estimateGas: contract.connect(evm.$signer).estimateGas
+                method: contract.connect(evm.$signer)[key]
+                // estimateGas: contract.connect(evm.$signer).estimateGas
               })
           } catch (e) {
             return contract[key]

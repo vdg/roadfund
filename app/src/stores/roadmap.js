@@ -76,12 +76,13 @@ const createStore = () => {
 
     const roadfund = blockchain.roadfund(evm.$chainId)
 
-    const { uri, channels, cooling, names, claimedAt, claimedQty } =
+    const { uri, isCreator, channels, cooling, names, claimedAt, claimedQty } =
       await roadfund.getInfos(address)
 
     const features = channels.map(({ amount, totalAcquired }, i) => ({
       nr: i + 1,
       amount,
+      isCreator,
       pledges: totalAcquired,
       cooling: cooling[i],
       name: names[i],

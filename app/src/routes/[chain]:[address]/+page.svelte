@@ -17,9 +17,11 @@
 
   import { gradient } from '$lib/actions/gradient.js'
 
-  import AddFeature from '$components/AddFeature.svelte'
-
   import roadmap from '$stores/roadmap.js'
+
+  import AddFeature from '$components/AddFeature.svelte'
+  import Pledge from '$components/Pledge.svelte'
+  import Claim from '$components/Claim.svelte'
 
   export let data
   $: ({ chain, address } = data)
@@ -29,14 +31,16 @@
   $: supported = $signerAddress && blockchain.isSupported($chainId)
 
   let addActive = false
-
-  let voteActive = 0
+  let pledgeActive = 0
+  let claimActive = 0
 
 </script>
 
 {#if $signerAddress && supported && address}
 
   <AddFeature bind:active={addActive} {address} />
+  <Pledge bind:active={pledgeActive} {address} />
+  <Claim bind:active={claimActive} {address} />
 
   <div class="columns">
     <div class="column is-3">
@@ -88,12 +92,12 @@
       </aside>
     </div>
     <div class="column is-9">
-      <div class="box content">
 
         {#if live.features && live.features.length}
           {#each live.features as feature}
 
-        <article class="post mt-3">
+      <div class="box content mb-3">
+        <article class="post ">
           <h4>{feature.name}</h4>
           <div class="media">
             <div class="square-left mr-5" use:gradient data-gradient={feature.nr}>
@@ -109,20 +113,21 @@
             </div>
             <div class="media-right is-size-3" >
               <span class="has-text-grey"
-              ><i class="fa fa-area-chart mr-3" />{feature.pledges}</span>
+              ><i class="fa fa-area-chart mr-3" />{feature.pledges} pledges</span>
             </div>
           </div>
 
-          <button class="mt-4 button is-primary is-outlined is-block is-small" on:click={() => {pledgeActive = !pledgeActive}}>Pledge for that feature</button>
-          <button class="mt-4 button is-primary is-outlined is-block is-small" on:click={() => {pledgeActive = !pledgeActive}}>Pledge for that feature</button>
+          <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
+
+          <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
 
         </article>
+      </div>
 
         {/each}
         {/if}
 
 
-      </div>
     </div>
   </div>
 
