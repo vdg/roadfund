@@ -11,11 +11,17 @@ import "@rougenetwork/v2-core/contracts/proxies/RougeProxy.sol";
 
 // Roadfund contract that extends Ownable from OpenZeppelin
 contract Roadfund is Ownable {
+    using Address for address payable;
+
     address public _factory;
     address public _singleton;
 
     // Minimum percentage to contest a feature claim
-    uint256 public constant CONTEST_LIMIT = 25;
+    uint256 public constant CONTEST_LIMIT = 12;
+
+    // Cooling pledges % to give back as penalty when closing a feature
+    uint256 public constant CONTEST_PENALTY = 150;
+
     uint16 public constant CHANNEL_LIMIT = ~uint16(0); // 65,535
 
     // Set Rouge factory and singleton addresses
@@ -30,12 +36,15 @@ contract Roadfund is Ownable {
     }
 
     uint256 private _nonce;
+    address payable _penaltiesReceipient;
 
     // Function to create a new roadmap (Rouge instance)
     function createRoadmap(
-        string memory uri
+        string memory uri,
+        address payable penaltiesReceipient
     ) public returns (RougeProxy proxy) {
         _nonce += 1;
+        _penaltiesReceipient = penaltiesReceipient;
 
         // Create special admin authorization for the message sender
         uint16[] memory channels = new uint16[](1);
@@ -143,7 +152,7 @@ contract Roadfund is Ownable {
     mapping(Rouge => mapping(uint16 => uint16)) private _claimedQty;
 
     // Function to claim funds for a specific feature
-    function claim(Rouge rouge, uint16 channelId) public payable {
+    function claim(Rouge rouge, uint16 channelId) public {
         // Check if the message sender is the roadmap creator
         require(
             rouge.hasRole(
@@ -158,7 +167,7 @@ contract Roadfund is Ownable {
     }
 
     // Function to close a specific feature and withdraw funds
-    function close(Rouge rouge, uint16 channelId) public {
+    function close(Rouge rouge, uint16 channelId) public payable {
         // Check if the message sender is the roadmap creator
         require(
             rouge.hasRole(
@@ -187,13 +196,28 @@ contract Roadfund is Ownable {
 
         (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
+        // Require penalty payment for closing the feature if coolingPledges exist
+        require(
+            msg.value >
+                ((coolingPledges * CONTEST_PENALTY) / 100) *
+                    channels[channelId].amount,
+            "penalty unpaid"
+        );
+
+        // Transfer the penalty payment (or tip) to the penalties recipient
+        if (msg.value > 0) {
+            _penaltiesReceipient.sendValue(msg.value);
+        }
         console.log(
             "amount per pledge for [%s] =  %s  ",
             channels[channelId].amount
         );
 
         // Withdraw funds to the message sender
-        rouge.widthdraw(payable(_msgSender()), _pledges[rouge][channelId] * 1);
+        rouge.widthdraw(
+            payable(_msgSender()),
+            _pledges[rouge][channelId] * channels[channelId].amount
+        );
 
         // Revoke the acquire authorization for the closed feature
         grantFeature(rouge, channelId, false);

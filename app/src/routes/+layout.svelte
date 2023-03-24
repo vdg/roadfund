@@ -27,8 +27,7 @@
     <div id="topNav" class="navbar-menu">
       <div class="navbar-start">
         <a class="navbar-item" href="/">Home</a>
-        <a class="navbar-item" href="/0x1:0x2/">test project</a>
-        <a class="navbar-item" href="#">Menu2</a>
+        <a class="navbar-item" href="/about">About</a>
       </div>
       <div class="navbar-end">
         <div class="navbar-item">

@@ -46,10 +46,13 @@ describe("Roadfund", function () {
     let roadmap;
 
     it("Should create a new roadmap contract", async function () {
-      const { roadfund, owner, factory, rouge, otherAccount } =
-        await loadFixture(deployRoadfund);
+      const { roadfund, owner, factory, rouge, creator } = await loadFixture(
+        deployRoadfund
+      );
 
-      const tx = await roadfund.connect(otherAccount).createRoadmap(metaURI);
+      const tx = await roadfund
+        .connect(creator)
+        .createRoadmap(metaURI, owner.address);
       const rcpt = await tx.wait();
 
       const topic = factory.interface.getEventTopic("ProxyCreation");
@@ -94,16 +97,16 @@ describe("Roadfund", function () {
         amount: expandToNDecimals(1, 18),
       };
 
-      const [owner, otherAccount] = await ethers.getSigners();
+      const [owner, creator] = await ethers.getSigners();
 
-      const tx = await roadfund.connect(otherAccount).addFeature(
+      const tx = await roadfund.connect(creator).addFeature(
         roadmap.address,
         "feature A",
         60 * 10, // 10 minutes cooling period
         rougelib.abiEncodeChannel(channel)
       );
 
-      const tx2 = await roadfund.connect(otherAccount).addFeature(
+      const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         "feature B",
         60 * 10, // 10 minutes cooling period
@@ -112,8 +115,7 @@ describe("Roadfund", function () {
     });
 
     it("user X acquire 10 (direct)", async function () {
-      const [owner, otherAccount, userX, userY, userZ] =
-        await ethers.getSigners();
+      const [owner, creator, userX, userY, userZ] = await ethers.getSigners();
 
       const channels = [
         { free: false, label: "featureA", amount: expandToNDecimals(1, 18) },
@@ -142,8 +144,7 @@ describe("Roadfund", function () {
     });
 
     it("user X pledge 10 votes for feature A", async function () {
-      const [owner, otherAccount, userX, userY, userZ] =
-        await ethers.getSigners();
+      const [owner, creator, userX, userY, userZ] = await ethers.getSigners();
 
       const tx = await roadfund
         .connect(userX)

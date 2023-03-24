@@ -3,16 +3,6 @@ import hre from "hardhat";
 import Factory from "@rougenetwork/v2-core/Factory.json";
 import Rouge from "@rougenetwork/v2-core/Rouge.json";
 
-const {
-  commify,
-  parseEther,
-  parseUnits,
-  keccak256,
-  defaultAbiCoder,
-  toUtf8Bytes,
-  solidityPack,
-} = ethers.utils;
-
 const { loadFixture } = require("@nomicfoundation/hardhat-network-helpers");
 
 const metaURI = "somewhere on ipfs";
@@ -61,7 +51,7 @@ export const getRouge = async () => {
 
 export const deployRoadfund = async () => {
   // Contracts are deployed using the first signer/account by default
-  const [owner, otherAccount] = await ethers.getSigners();
+  const [owner, creator] = await ethers.getSigners();
 
   const { factory, rouge, rougelib } = await getRouge();
 
@@ -69,18 +59,20 @@ export const deployRoadfund = async () => {
 
   const roadfund = await Roadfund.deploy(factory.address, rouge.address);
 
-  return { roadfund, owner, otherAccount, factory, rouge, rougelib };
+  return { roadfund, owner, creator, factory, rouge, rougelib };
 };
 
 export const deployRoadfundAndCreateProject = async () => {
-  const { roadfund, owner, factory, rouge, rougelib, otherAccount } =
+  const { roadfund, owner, factory, rouge, rougelib, creator } =
     await loadFixture(deployRoadfund);
 
   const auths = [
     { scope: rouge.interface.getSighash("acquire"), enable: true },
   ].map((a) => rougelib.abiEncodeAuth(a));
 
-  const tx = await roadfund.connect(otherAccount).createRoadmap(metaURI);
+  const tx = await roadfund
+    .connect(creator)
+    .createRoadmap(metaURI, owner.address);
   const rcpt = await tx.wait();
 
   const topic = factory.interface.getEventTopic("ProxyCreation");
@@ -94,5 +86,5 @@ export const deployRoadfundAndCreateProject = async () => {
     ethers.provider
   );
 
-  return { roadfund, roadmap, owner, rougelib, otherAccount };
+  return { roadfund, roadmap, owner, rougelib, creator };
 };
