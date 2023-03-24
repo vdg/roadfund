@@ -15,7 +15,6 @@
 
   import blockchain from '$lib/blockchain.js'
 
-  import TxButton from '$components/TxAction/Button.svelte'
 
   import AddFeature from '$components/AddFeature.svelte'
 
@@ -126,13 +125,7 @@
         </div>
       </div>
 
-      <button class="button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
-
-      <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={addFeatureCtx}
-      >Add feature</TxButton>
-
-      <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={addFeatureCtx}
-      >Add feature</TxButton>
+      <button class="mt-4 button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
 
       <aside class="menu">
         <p class="menu-label">Tags</p>

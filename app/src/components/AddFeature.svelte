@@ -1,9 +1,11 @@
 <script>
   import { onMount } from 'svelte'
 
-  import { chainId, chainData } from 'svelte-ethers-store'
+  import {     signerAddress,
+         chainId, chainData } from 'svelte-ethers-store'
 
   import Modal from '$components/Modal.svelte'
+  import TxButton from '$components/TxAction/Button.svelte'
 
   export let active
 
@@ -85,8 +87,11 @@
       {#if control.hasErrors}<p class="help is-danger pr-3">
         Please fix errors above
       </p>{/if}
+
+      <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt" submitCtx={add}
+      >Add feature</TxButton>
       <button class="button is-black" on:click={cancel}>Cancel</button>
-      <button class="button is-primary" on:click={add}>Add</button>
+
     </footer>
   </div>
 </Modal>
