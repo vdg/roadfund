@@ -77,10 +77,9 @@ describe('Roadfund', function () {
     let roadfund
     let roadmap
     let owner
-    let rougelib
 
     it('initialize project', async function () {
-      void ({ roadfund, roadmap, owner, rougelib } = await loadFixture(
+      void ({ roadfund, roadmap, owner } = await loadFixture(
         deployRoadfundAndCreateProject
       ))
 
@@ -89,58 +88,22 @@ describe('Roadfund', function () {
       //return expect(decoded.singleton).to.equal(rouge.address);
     })
 
-    it('create features', async function () {
-      const channel = {
-        free: false,
-        label: 'Having a twin login',
-        token: ethers.constants.AddressZero,
-        amount: expandToNDecimals(1, 18)
-      }
-
+    it('add features', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       const tx = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature A',
-        60 * 10, // 10 minutes cooling period
-        rougelib.abiEncodeChannel(channel)
+        expandToNDecimals(1, 15), // 1 finney
+        60 * 10 // 10 minutes cooling period
       )
 
       const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature B',
-        60 * 10, // 10 minutes cooling period
-        rougelib.abiEncodeChannel(channel)
+        expandToNDecimals(1, 15), // 1 finney
+        60 * 10 // 10 minutes cooling period
       )
-    })
-
-    it('user X acquire 10 (direct)', async function () {
-      const [owner, creator, userX, userY, userZ] = await ethers.getSigners()
-
-      const channels = [
-        { free: false, label: 'featureA', amount: expandToNDecimals(1, 18) },
-        { free: false, label: 'featureB', amount: expandToNDecimals(1, 18) }
-      ]
-
-      const params = await rougelib.abiEncodeAcquire({
-        channels,
-        contract: roadmap,
-        signer: userX,
-        secret: 'test',
-        acquisitions: [
-          { channelId: 0, qty: 1 },
-          { channelId: 1, qty: 10 }
-        ]
-      })
-
-      // const tx = await roadfund
-      //   .connect(userX)
-      //       .pledge(roadmap.address, 1, 10, { value: expandToNDecimals(10, 18) });
-
-      params[1].value = expandToNDecimals(11, 18)
-      console.log(params)
-
-      void (await roadmap.connect(userX).acquire(...params)).wait()
     })
 
     it('user X pledge 10 votes for feature A', async function () {

@@ -14,7 +14,6 @@
   import { abiEncodeAuth } from "@rougenetwork/v2-core/rouge"
 
   import Factory from "@rougenetwork/v2-core/Factory.json";
-  import Rouge from "@rougenetwork/v2-core/Rouge.json";
 
   import blockchain from '$lib/blockchain.js'
 
@@ -25,39 +24,14 @@
 
   const createCtx = async () => {
 
-    // XXX in env ...
-    const rouge = new ethers.Contract(
-      '0x376438641eB95A31b3AA9BD5bAe4b635577BBE74',
-      Rouge.abi,
-      ethers.provider
-    )
     const roadfund = blockchain.roadfund($chainId)
-
-    const auths = [
-      { scope: rouge.interface.getSighash("acquire"), enable: true },
-    ].map((a) => abiEncodeAuth(a));
-
-    const initCode = rouge.interface.encodeFunctionData("setup", [
-      roadfund.address,
-      'test',
-      [],
-      auths,
-    ]);
-
-    console.log( roadfund.address, auths,  rouge.interface, initCode, $signerAddress)
-
-    let saltNonce = await $provider.getTransactionCount(
-      $signerAddress
-    )
-
-    console.log( roadfund.address, [ initCode, saltNonce   ])
 
     const ifactory = new ethers.utils.Interface(Factory.abi)
     const topic = ifactory.getEventTopic("ProxyCreation")
 
     return {
       call: roadfund.createRoadmap,
-      params: [ initCode, saltNonce ],
+      params: [ 'ipfs://', await roadfund.owner() ],
       onReceipt: (rcpt) => {
 
         const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];

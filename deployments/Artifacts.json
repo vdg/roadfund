@@ -5,7 +5,7 @@
       "chainId": "1337",
       "contracts": {
         "Roadfund": {
-          "address": "0xe8EC58Af4c7C25fDFb25f5D887F0486DA7a8D9C6",
+          "address": "0x1F1E1799a9909f1736C33aA4574Af2e4d8bc64C4",
           "abi": [
             {
               "inputs": [
@@ -44,6 +44,45 @@
             },
             {
               "inputs": [],
+              "name": "CHANNEL_LIMIT",
+              "outputs": [
+                {
+                  "internalType": "uint16",
+                  "name": "",
+                  "type": "uint16"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "CONTEST_LIMIT",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
+              "name": "CONTEST_PENALTY",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [],
               "name": "_factory",
               "outputs": [
                 {
@@ -79,6 +118,11 @@
                   "internalType": "string",
                   "name": "name",
                   "type": "string"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "cooling",
+                  "type": "uint256"
                 },
                 {
                   "components": [
@@ -121,14 +165,50 @@
             {
               "inputs": [
                 {
-                  "internalType": "bytes",
-                  "name": "initializer",
-                  "type": "bytes"
+                  "internalType": "contract Rouge",
+                  "name": "rouge",
+                  "type": "address"
                 },
                 {
-                  "internalType": "uint256",
-                  "name": "saltNonce",
-                  "type": "uint256"
+                  "internalType": "uint16",
+                  "name": "channelId",
+                  "type": "uint16"
+                }
+              ],
+              "name": "claim",
+              "outputs": [],
+              "stateMutability": "nonpayable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "contract Rouge",
+                  "name": "rouge",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "channelId",
+                  "type": "uint16"
+                }
+              ],
+              "name": "close",
+              "outputs": [],
+              "stateMutability": "payable",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "string",
+                  "name": "uri",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address payable",
+                  "name": "penaltiesReceipient",
+                  "type": "address"
                 }
               ],
               "name": "createRoadmap",
@@ -153,6 +233,29 @@
                 }
               ],
               "stateMutability": "view",
+              "type": "function"
+            },
+            {
+              "inputs": [
+                {
+                  "internalType": "contract Rouge",
+                  "name": "rouge",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "channelId",
+                  "type": "uint16"
+                },
+                {
+                  "internalType": "uint16",
+                  "name": "qty",
+                  "type": "uint16"
+                }
+              ],
+              "name": "pledge",
+              "outputs": [],
+              "stateMutability": "payable",
               "type": "function"
             },
             {

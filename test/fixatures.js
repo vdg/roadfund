@@ -42,29 +42,26 @@ export const getRouge = async () => {
 
   const rougelib = await import('@rougenetwork/v2-core/rouge.mjs')
 
-  return { factory, rouge, rougelib }
+  return { factory, rouge }
 }
 
 export const deployRoadfund = async () => {
   // Contracts are deployed using the first signer/account by default
   const [owner, creator] = await ethers.getSigners()
 
-  const { factory, rouge, rougelib } = await getRouge()
+  const { factory, rouge } = await getRouge()
 
   const Roadfund = await ethers.getContractFactory('Roadfund')
 
   const roadfund = await Roadfund.deploy(factory.address, rouge.address)
 
-  return { roadfund, owner, creator, factory, rouge, rougelib }
+  return { roadfund, owner, creator, factory, rouge }
 }
 
 export const deployRoadfundAndCreateProject = async () => {
-  const { roadfund, owner, factory, rouge, rougelib, creator } =
-    await loadFixture(deployRoadfund)
-
-  const auths = [
-    { scope: rouge.interface.getSighash('acquire'), enable: true }
-  ].map((a) => rougelib.abiEncodeAuth(a))
+  const { roadfund, owner, factory, rouge, creator } = await loadFixture(
+    deployRoadfund
+  )
 
   const tx = await roadfund
     .connect(creator)
@@ -78,5 +75,5 @@ export const deployRoadfundAndCreateProject = async () => {
 
   const roadmap = new ethers.Contract(decoded.proxy, Rouge.abi, ethers.provider)
 
-  return { roadfund, roadmap, owner, rougelib, creator }
+  return { roadfund, roadmap, owner, creator }
 }
