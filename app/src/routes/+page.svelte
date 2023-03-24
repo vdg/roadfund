@@ -60,12 +60,18 @@
 
 {#if $signerAddress && supported}
 
-  <RoadmapList title="Your roadmaps" addresses={myRoadmaps} />
+  <RoadmapList title="Your very own roadmaps!" addresses={myRoadmaps}>
 
-  <RoadmapList title="Roadmap saved" addresses={savedRoadmaps} />
+    <nav class="level mt-5">
+      <div class="level-item has-text-centered">
+        <TxButton disabled={!$signerAddress} class="mt-4 is-primary is-block is-large" submitCtx={createCtx}
+        >Create a roadmap</TxButton>
+      </div>
+    </nav>
 
-  <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt is-large" submitCtx={createCtx}
-  >Create a roadmap</TxButton>
+  </RoadmapList>
+
+  <RoadmapList title="Saved roadmaps of your peers!" addresses={savedRoadmaps} />
 
 {:else}
 
@@ -78,7 +84,7 @@
         </p>
       {:else}
         <p class="title">
-          Please connect to your wallet
+          Fancy linking up with your wallet to start?
         </p>
       {/if}
 

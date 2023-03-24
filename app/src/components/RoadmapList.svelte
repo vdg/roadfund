@@ -5,6 +5,12 @@
     chainId
   } from 'svelte-ethers-store'
 
+  import { Identicon } from 'svelte-ethers-store/components'
+
+  import { formatAddress } from '$lib/utils.js'
+
+  import Roadmap from '$components/Roadmap.svelte'
+
   export let title
 
   export let addresses = []
@@ -15,53 +21,31 @@
 
 </script>
 
-<section class="hero is-primary">
+<section class="hero is-primary mb-6">
   <div class="hero-body has-text-centered">
     <p class="title">
       {title}
     </p>
 
-    <div class="columns is-multiline">
+    {#if addresses.length}
 
-      {#each addresses as address}
-      <div class="column is-one-third">
-        <div class="box">
-
-          <div class="card" on:click={() => open(address)}>
-            <div class="card-image">
-              <figure class="image is-4by3">
-                <img src="https://bulma.io/images/placeholders/1280x960.png" alt="Placeholder image">
-              </figure>
-            </div>
-            <div class="card-content">
-              <div class="media">
-                <div class="media-left">
-                  <figure class="image is-48x48">
-                    <img src="https://bulma.io/images/placeholders/96x96.png" alt="Placeholder image">
-                  </figure>
-                </div>
-                <div class="media-content">
-                  <p class="title is-4">John Smith</p>
-                  <p class="subtitle is-6">@johnsmith</p>
-                </div>
-              </div>
-
-              <div class="content">
-                Lorem ipsum dolor {address}
-                Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-                <a href="#">#css</a> <a href="#">#responsive</a>
-                <br>
-                <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-              </div>
-            </div>
+      <div class="columns is-multiline">
+        {#each addresses as address}
+          <div class="column is-one-third">
+            <Roadmap {address} on:click={() => open(address)}  />
           </div>
-
-
-        </div>
+        {/each}
       </div>
-      {/each}
+    {:else}
 
-    </div>
+      <p class="subtitle mt-4">
+        well, nothing yet!
+      </p>
+
+    {/if}
+
+    <slot />
+
   </div>
 </section>
 
@@ -69,16 +53,13 @@
 <style lang="scss">
   @import '../scss/_variables.scss';
 
-
-  .card {
+  .column {
 
     &:hover {
       background-color: #eee;
       cursor: pointer;
-      transform: scale(1.02);
+      transform: scale(1.01);
     }
-
-
 
   }
 

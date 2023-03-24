@@ -8,6 +8,15 @@ export const explorer = (chainData, type, id) => {
   }
 }
 
+export const formatAddress = (a = '', short = true) => {
+  try {
+    a = utils.getAddress(a)
+    return short && a ? a.substr(0, 6) + '...' + a.substr(38, 4) : a
+  } catch (e) {
+    return ''
+  }
+}
+
 export const toWei = (s) => {
   let wei = utils.parseUnits((s + '').split(' ').join(''), 18)
   return wei

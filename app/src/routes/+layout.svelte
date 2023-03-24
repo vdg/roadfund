@@ -9,22 +9,31 @@
     chainId,
     chainData
   } from 'svelte-ethers-store'
+
+  let menu
+
+  import { formatAddress } from '$lib/utils.js'
+
 </script>
 
-<nav class="navbar is-white topNav">
+<nav class="navbar topNav is-transparent">
   <div class="container">
     <div class="navbar-brand">
       <a class="navbar-item" href="../">
         <span class="is-size-6"><b>Roadfund</b></span>
         <img width="112" height="28" class="is-hidden" />
       </a>
-      <div class="navbar-burger burger" data-target="topNav">
+      <div class="navbar-burger burger" class:is-active={menu}         on:click={() => {
+          menu = !menu
+        }}
+
+                  data-target="topNav">
         <span />
         <span />
         <span />
       </div>
     </div>
-    <div id="topNav" class="navbar-menu">
+    <div id="topNav" class="navbar-menu" class:is-active={menu}>
       <div class="navbar-start">
         <a class="navbar-item" href="/">Home</a>
         <a class="navbar-item" href="/about">About</a>
@@ -32,7 +41,7 @@
       <div class="navbar-end">
         <div class="navbar-item">
           {#if $signerAddress}
-            {$signerAddress}
+            {formatAddress($signerAddress)}
           {:else}
             <div class="field is-grouped">
               <p class="control">
@@ -111,4 +120,65 @@
 
 <style lang="scss" global>
   @import '../scss/main.scss';
+
+  body {
+    background: linear-gradient(135deg, #000000, #ffffff);
+    min-height: 100%;
+    color: #fff;
+
+  }
+
+  $primary: #000;
+  $primary-hover: #fff;
+
+  $secondary: rgb(93, 0, 0);
+  $secondary-hover: #fff;
+
+  .button {
+    font-weight: $weight-semibold;
+
+    &.is-primary {
+      background-color: $primary;
+      color: $primary-hover;
+
+      &:hover,
+      &.is-hovered {
+        background-color: $primary-hover;
+        color: $primary;
+      }
+      &.is-inverted {
+        background-color: transparent;
+        border-color: $primary;
+        color: $primary;
+        &:hover,
+        &.is-hovered {
+          background-color: transparent;
+          border-color: $primary-hover;
+          color: $primary-hover;
+        }
+      }
+    }
+
+    &.is-secondary {
+      background-color: $secondary;
+      &:hover,
+      &.is-hovered {
+        background-color: $secondary-hover;
+      }
+      &.is-inverted {
+        background-color: transparent;
+        border-color: $secondary;
+        color: $secondary;
+        &:hover,
+        &.is-hovered {
+          background-color: transparent;
+          border-color: $secondary-hover;
+          color: $secondary-hover;
+        }
+      }
+    }
+  }
+
+
+
 </style>
