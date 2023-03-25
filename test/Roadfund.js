@@ -461,7 +461,7 @@ describe('Roadfund', function () {
 
       const tx = await roadfund
         .connect(creator)
-        .close(roadmap.address, 1, { value: expandToNDecimals(15, 15) })
+        .close(roadmap.address, 1, { value: expandToNDecimals(16.5, 15) })
     })
   })
 
@@ -570,7 +570,7 @@ describe('Roadfund', function () {
 
       const tx = await roadfund
         .connect(creator)
-        .close(roadmap.address, 1, { value: expandToNDecimals(4.5, 15) })
+        .close(roadmap.address, 1, { value: expandToNDecimals(0, 15) })
     })
   })
 })

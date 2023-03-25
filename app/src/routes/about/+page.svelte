@@ -76,12 +76,62 @@
       <ul>
       </ul>
 
+      <h3>Game theory dynamics</h3>
+
+      <p>
+        The Roadfund contract employs game theory to balance the interests of software project creators and users, encouraging consensus-building and efficient resource allocation. Let's explore a few illustrative scenarios to better understand the contract's game theory dynamics.
+      </p>
+      <h4>Scenario 1: High user consensus</h4>
+      <p>
+        In this scenario, a roadmap creator adds several features to their software project. Most users agree on the priority of these features, resulting in high user consensus. As users pledge their support for specific features, the roadmap creator can safely claim funds for implementing them, knowing that the challenge duration will most likely pass without significant contestation. This scenario demonstrates a Nash equilibrium, where both parties benefit from working together and prioritizing features with the most support.
+      </p>
+      <h4>Scenario 2: Low user consensus</h4>
+      <p>
+        In a low consensus scenario, users have divergent opinions on feature priorities. The roadmap creator claims funds for implementing a feature that doesn't have broad support, triggering the challenge duration. Users opposed to the feature's implementation pledge additional funds to contest the claim, surpassing the 25% threshold. The roadmap creator must address users' concerns and initiate a new claim, raising the contestation threshold and potential penalty. This scenario incentivizes the roadmap creator to prioritize features with more substantial user support to avoid penalties and build consensus.
+      </p>
+      <h4>Scenario 3: Collaborative consensus-building</h4>
+      <p>
+        In this scenario, the roadmap creator recognizes that user consensus is not yet achieved and actively engages with users to better understand their priorities. By incorporating user feedback and adjusting the proposed features, the roadmap creator fosters a more collaborative environment. Users feel more invested in the software's direction, and the roadmap creator can claim funds with greater confidence, knowing that users are less likely to contest their claims. This scenario exemplifies how the Roadfund contract encourages collaboration and communication between creators and users.
+      </p>
+      <h4>Scenario 4: Strategic pledging</h4>
+      <p>
+        In this scenario, users recognize the power of their pledges in influencing the project's direction. By strategically pledging for the features they care about most, users can sway the roadmap creator's decisions. The roadmap creator, in turn, is incentivized to prioritize features with significant user support to minimize the risk of contestation and penalties. This scenario highlights how the contract encourages users to actively engage in the project's development and allocate their pledges efficiently.
+      </p>
+      <p>
+        These scenarios illustrate how the Roadfund contract leverages game theory to create a balanced system that fosters collaboration, consensus-building, and efficient resource allocation, ultimately benefiting both software project creators and users.
+      </p>
+
+      <h3>Edge cases</h3>
+
+      <p>
+        The Roadfund contract also takes into account edge cases, where users or creators may attempt to disrupt the system. Let's examine two such scenarios and analyze the outcomes based on the contract's rules.
+      </p>
+      <h4>Scenario 1: Users continuously blocking feature closing</h4>
+      <p>
+        In this scenario, a group of users consistently contests the closing of a specific feature, regardless of the roadmap creator's efforts to address their concerns. Each time the creator claims the funds for the feature, these users pledge enough funds to surpass the 25% threshold, blocking the closing. The contract's rules cause the contestation threshold to increase with each new claim, making it progressively more challenging for users to block the closing. The escalating penalty for the creator also encourages them to engage with the dissenting users and address their concerns to avoid continuous contestation. In this scenario, the contract's design incentivizes both parties to find a consensus while also limiting the ability of users to indefinitely block feature closing.
+      </p>
+      <h4>Scenario 2: Creator persistently re-claims and closes contested features</h4>
+      <p>
+        In this scenario, a roadmap creator stubbornly re-claims and attempts to close a contested feature after each challenge, without addressing users' concerns. As the creator initiates new claims, the contestation threshold increases, requiring users to pledge more funds to contest the claim successfully. However, the creator also faces an escalating penalty calculated as 150% of the challenging pledges. This growing penalty discourages the creator from continuously re-claiming and closing the feature without addressing users' concerns. The contract's design encourages the creator to find common ground with users to avoid increasingly costly penalties.
+      </p>
+      <p>
+        These edge case scenarios demonstrate how the Roadfund contract mitigates potential disruptive behavior from users or creators by incentivizing consensus-building and penalizing actions that hinder collaboration. The contract's rules work to maintain a balanced system that benefits both software project creators and users, even in challenging situations.
+      </p>
+
+
+
     </div>
   </div>
 </section>
 
 
 <style lang="scss">
+
+  h3, h4 {
+      color: #fff;
+
+  }
+
 
 
 </style>

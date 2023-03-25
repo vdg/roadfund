@@ -16,14 +16,19 @@ contract Roadfund is Ownable {
   address public _factory;
   address public _singleton;
 
+  uint48 public constant NFT_LIMIT = ~uint48(0); // 281,474,976,710,655
+  uint16 public constant CHANNEL_LIMIT = ~uint16(0); // 65,535
+
+  // the 3 constants below gouvern the game theory of the contract
+
   // Percentage of challenge pledges to be given back as a penalty when closing a feature
   uint256 public constant CHALLENGE_PENALTY = 150;
 
   // limit for a substantially challenged feature to be considered contested
   uint256 public constant CONTEST_LIMIT = 12;
 
-  uint48 public constant NFT_LIMIT = ~uint48(0); // 281,474,976,710,655
-  uint16 public constant CHANNEL_LIMIT = ~uint16(0); // 65,535
+  // Percentage of the challenge pledges to keep in the next claim cycle
+  uint256 public constant RECLAIM_THRESHOLD = 33;
 
   // Set Rouge factory and singleton addresses
   function setRouge(address factory, address singleton) public onlyOwner {
@@ -31,7 +36,7 @@ contract Roadfund is Ownable {
     _singleton = singleton;
   }
 
-  function getRouge() public returns (address factory, address singleton) {
+  function getRouge() public view returns (address factory, address singleton) {
     factory = _factory;
     singleton = _singleton;
   }
@@ -182,8 +187,9 @@ contract Roadfund is Ownable {
       // raising threshold a bit so feature may be closed again, but new challenge duration start and easier to re-contest
       _claimedThreshold[rouge][channelId] =
         _claimedThreshold[rouge][channelId] +
-        (_pledges[rouge][channelId] - _claimedThreshold[rouge][channelId]) /
-        3;
+        ((_pledges[rouge][channelId] - _claimedThreshold[rouge][channelId]) *
+          uint16(RECLAIM_THRESHOLD)) /
+        100;
     } else {
       _claimedThreshold[rouge][channelId] = _pledges[rouge][channelId];
     }
@@ -207,11 +213,13 @@ contract Roadfund is Ownable {
     uint16 challengePledges = _pledges[rouge][channelId] -
       _claimedThreshold[rouge][channelId];
 
-    // console.log(
-    //   'challengePledges = %s (%s%%)',
-    //   challengePledges,
-    //   (100 * challengePledges) / _pledges[rouge][channelId]
-    // );
+    // if (_pledges[rouge][channelId] > 0) {
+    //   console.log(
+    //               'challengePledges = %s (%s%%)',
+    //               challengePledges,
+    //               (100 * challengePledges) / _pledges[rouge][channelId]
+    //               );
+    // }
 
     // Refuse to close contested features
     require(
