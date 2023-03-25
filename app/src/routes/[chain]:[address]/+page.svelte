@@ -83,7 +83,7 @@
               <h4>{feature.name}</h4>
               <div class="media">
                 <div class="square-left mr-5" use:gradient data-hashed={feature.nr}>
-                  <span class="number">{feature.nr}</span>
+                  <span class="number">#{feature.nr}2222</span>
                 </div>
                 <div class="media-content">
                   <div class="content">
@@ -185,8 +185,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 48px;
-      height: 100%;
+      height: 48px;
 
       .number {
         display: block;

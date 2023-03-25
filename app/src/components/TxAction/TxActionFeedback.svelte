@@ -21,29 +21,29 @@
 {:else if $txAction.control.err}
   <span class="icon-text is-warning">
     <span>{$txAction.control.errMsg || 'checks failed'}</span>
-    <Icon name="ThumbDown" />
+    <Icon name="times" />
   </span>
 {:else if call.err}
   <span class="icon-text is-danger">
     <span>{call.errMsg || 'tx failed'}</span>
-    <Icon name="ThumbDown" />
+    <Icon name="times" />
   </span>
-{:else if call.step === 1}
+{:else if call.step === 12}
   <span class="icon-text" /><span>waiting wallet</span><span class="icon"
     ><span class="loader" />
   </span>
-{:else if call.step === 2}
+{:else if call.step === 1}
   <span class="icon-text">
-    <span class="icon mr-0"><span class="pending" /></span>
+    <span class="icon mr-1"><span class="pending" /></span>
     <a
       rel="noreferrer"
       target="_blank"
-      href={explorer($chainData, 'tx', call.tx.hash)}>pending</a>
-    <Icon name="ExternalLink" />
+      href={explorer($chainData, 'tx', call.tx?.hash)}>pending</a>
+    <Icon name="external-link" />
   </span>
 {:else if call.step === 3}
   <span class="icon-text">
-    <Icon name="Check" class="mr-0" />
+    <Icon name="check-circle" class="mr-0" />
     <a
       rel="noreferrer"
       target="_blank"
@@ -56,14 +56,18 @@
   @import '../../scss/_variables.scss';
 
   .pending {
-    border: 0.5em solid $brand;
+    border: 0.5em solid #3e6;
     border-radius: 60%;
-    border-top: 0.3em solid $primary;
-    border-bottom: 0.3em solid $primary;
+    border-top: 0.3em solid #63e;
+    border-bottom: 0.3em solid #e63;
     width: 1em;
     height: 1em;
     -webkit-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
+  }
+
+  a {
+    color: #fff;
   }
 
   @-webkit-keyframes spin {
