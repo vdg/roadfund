@@ -81,20 +81,24 @@ const createStore = () => {
       uri,
       channels,
       penaltiesRecipient,
-      cooling,
+      open,
       names,
+      featureURI,
+      challenge,
       claimedAt,
-      claimedQty
+      claimedThreshold
     } = await roadfund.getInfos(address)
 
     const features = channels.map(({ amount, totalAcquired }, i) => ({
       nr: i + 1,
       amount,
       pledges: totalAcquired,
-      cooling: cooling[i],
+      open: open[i],
       name: names[i],
+      featureURI: featureURI[i],
+      challenge: challenge[i],
       claimedAt: parseInt(claimedAt[i]),
-      claimedQty: claimedQty[i]
+      claimedThreshold: claimedThreshold[i]
     }))
 
     console.log(

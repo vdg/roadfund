@@ -96,6 +96,7 @@ contract Roadfund is Ownable {
 
   // Mappings to store feature information
   mapping(Rouge => mapping(uint16 => string)) private _featureName;
+  mapping(Rouge => mapping(uint16 => string)) private _featureURI;
   mapping(Rouge => mapping(uint16 => uint256))
     private _featureChallengeDuration;
 
@@ -103,8 +104,9 @@ contract Roadfund is Ownable {
   function addFeature(
     Rouge rouge,
     string memory name,
+    string memory uri,
     uint256 amount,
-    uint256 challenge //Rouge.Channel calldata channel
+    uint256 challenge
   ) public {
     (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
@@ -127,13 +129,14 @@ contract Roadfund is Ownable {
     // Grant the acquire authorization for the new feature
     grantFeature(rouge, uint16(channels.length), true);
 
-    // Store the feature name and challenge duration
+    // Store the feature name, uri and challenge duration
     _featureName[rouge][uint16(channels.length)] = name;
+    _featureURI[rouge][uint16(channels.length)] = uri;
     _featureChallengeDuration[rouge][uint16(channels.length)] = challenge;
   }
 
   // Mappings to store pledge information
-  // XXX future optimisation, use total acquired ?
+  // XXX future optimisation, use total acquired only ?
   mapping(Rouge => mapping(uint16 => uint16)) private _pledges;
 
   // Function to pledge funds to a specific feature
@@ -242,7 +245,32 @@ contract Roadfund is Ownable {
   }
 
   // Function to get all local state for a roadmap
-  function getState(
+  function getFeatures(
+    Rouge rouge,
+    uint256 max
+  )
+    internal
+    view
+    returns (
+      string[] memory names,
+      string[] memory featureURI,
+      uint256[] memory challenge
+    )
+  {
+    string[] memory names_ = new string[](max);
+    string[] memory uri_ = new string[](max);
+    uint256[] memory challenge_ = new uint256[](max);
+
+    for (uint16 i = 0; i < max; i++) {
+      names_[i] = _featureName[rouge][i];
+      uri_[i] = _featureURI[rouge][i];
+      challenge_[i] = _featureChallengeDuration[rouge][i];
+    }
+    return (names_, uri_, challenge_);
+  }
+
+  // Function to get all local state for a roadmap
+  function getFeaturesState(
     Rouge rouge,
     uint256 max
   )
@@ -250,26 +278,20 @@ contract Roadfund is Ownable {
     view
     returns (
       bool[] memory open,
-      string[] memory names,
-      uint256[] memory challenge,
       uint256[] memory claimedAt,
       uint16[] memory claimedThreshold
     )
   {
     bool[] memory open_ = new bool[](max);
-    string[] memory names_ = new string[](max);
-    uint256[] memory challenge_ = new uint256[](max);
     uint256[] memory at_ = new uint256[](max);
     uint16[] memory threshold_ = new uint16[](max);
 
     for (uint16 i = 0; i < max; i++) {
       open_[i] = rouge.isEnabled(rouge.acquire.selector, i);
-      names_[i] = _featureName[rouge][i];
-      challenge_[i] = _claimedAt[rouge][i];
       at_[i] = _claimedAt[rouge][i];
       threshold_[i] = _claimedThreshold[rouge][i];
     }
-    return (open_, names_, challenge_, at_, threshold_);
+    return (open_, at_, threshold_);
   }
 
   // Shortcut to get all infos we need onchain - aggregate Rouge instances + Roadfund
@@ -285,6 +307,7 @@ contract Roadfund is Ownable {
       address penaltiesRecipient,
       bool[] memory open,
       string[] memory names,
+      string[] memory featureURI,
       uint256[] memory challenge,
       uint256[] memory claimedAt,
       uint16[] memory claimedThreshold
@@ -294,7 +317,8 @@ contract Roadfund is Ownable {
     (uri, channels, ) = rouge.getInfos();
     penaltiesRecipient = _penaltiesRecipient[rouge];
 
-    (open, names, challenge, claimedAt, claimedThreshold) = getState(
+    (names, featureURI, challenge) = getFeatures(rouge, channels.length);
+    (open, claimedAt, claimedThreshold) = getFeaturesState(
       rouge,
       channels.length
     );

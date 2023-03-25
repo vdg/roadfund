@@ -98,6 +98,7 @@ describe('Roadfund', function () {
       const tx1 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature A',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
@@ -105,7 +106,8 @@ describe('Roadfund', function () {
 
       const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
-        'feature B',
+        'feature A',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
@@ -217,6 +219,7 @@ describe('Roadfund', function () {
       const tx1 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature A',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
@@ -225,6 +228,7 @@ describe('Roadfund', function () {
       const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature B',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
@@ -342,6 +346,7 @@ describe('Roadfund', function () {
       const tx1 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature A',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
@@ -350,6 +355,7 @@ describe('Roadfund', function () {
       const tx2 = await roadfund.connect(creator).addFeature(
         roadmap.address,
         'feature B',
+        'ipfs://',
         expandToNDecimals(1, 15), // 1 finney
         60 * 10 // 10 minutes challenge duration
       )
