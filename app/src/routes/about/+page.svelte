@@ -8,12 +8,12 @@
     <div class="content section">
 
       <p>
-        The Roadfund contract is designed to facilitate the creation of roadmaps
-        for software projects, allowing users to pledge support for specific
-        features they want to see implemented. There are two main types of
-        users: the roadmap creators, typically developers of a software project,
-        and the users of that software who vote with their pledges for the
-        features they want to see implemented first.
+        The Roadfund decentralized app/contract is designed to facilitate the
+        creation of roadmaps for software projects, allowing users to pledge
+        support for specific features they want to see implemented. There are
+        two main types of users: the roadmap creators, typically developers of a
+        software project, and the users of that software who vote with their
+        pledges for the features they want to see implemented first.
       </p>
       <p>
         Roadmap creators can create a new roadmap and add features to it. Each
@@ -68,6 +68,13 @@
         allocation of resources and a roadmap that better reflects the
         preferences of the software's users.
       </p>
+      <p>
+        Roadfund is fully permission-less with zero backend component. Roadfund
+        is open source, licenced under GPL v3, and build using the following
+        open source libs and framework:
+      </p>
+      <ul>
+      </ul>
 
     </div>
   </div>

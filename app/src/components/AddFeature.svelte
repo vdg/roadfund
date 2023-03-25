@@ -7,6 +7,8 @@
   import { toWei } from '$lib/utils.js'
   import blockchain from '$lib/blockchain.js'
 
+  import { gradient } from '$lib/actions/gradient.js'
+
   import Modal from '$components/Modal.svelte'
   import TxButton from '$components/TxAction/Button.svelte'
 
@@ -44,7 +46,7 @@
 
     return {
       call: roadfund.addFeature,
-      params: [ address, data.description, toWei(data.pledge), 60 * 10 ],
+      params: [ address, data.description, 'ipfs://', toWei(data.pledge), 60 * 5 ],
       onReceipt: (rcpt) => {
 
         console.log('found roadmap creation event', rcpt)
@@ -60,9 +62,10 @@
 
 
 <Modal bind:this={modal} bind:active noCloseButton={true}>
-  <div class="modal-card is-large">
-    <section class="modal-card-body has-background-light">
+  <div class="modal-card is-large" use:gradient data-hashed={999} xdata-endColor={200}>
+    <section class="modal-card-body">
       <h2 class="title">Add a feature</h2>
+      <h3 class="subtitle">Challenge duration in this beta version is 10 minutes to allow easy testing</h3>
 
       <div class="column is-half">
         <div class="field">
@@ -114,3 +117,13 @@
   </div>
 </Modal>
 
+
+<style lang="scss">
+
+  @import '../scss/_variables.scss';
+
+  .modal-card-body, .modal-card-foot {
+    background: transparent;
+  }
+
+</style>

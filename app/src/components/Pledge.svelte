@@ -70,7 +70,7 @@
 
 
 <Modal bind:this={modal} active={!!active} noCloseButton={true}>
-  <div class="modal-card is-large" use:gradient data-gradient={active}>
+  <div class="modal-card is-large" use:gradient data-hashed={active}>
     <section class="modal-card-body" >
       <h2 class="title">{feature.name}</h2>
       <h3 class="subtitle">How many tokens to you want to pledge?</h3>

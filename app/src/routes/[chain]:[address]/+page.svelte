@@ -25,6 +25,7 @@
   import AddFeature from '$components/AddFeature.svelte'
   import Pledge from '$components/Pledge.svelte'
   import Claim from '$components/Claim.svelte'
+  import Timer from '$components/Timer.svelte'
 
   export let data
   $: ({ chain, address } = data)
@@ -36,6 +37,8 @@
   let addActive = false
   let pledgeActive = 0
   let claimActive = 0
+
+  const ended = {}
 
 </script>
 
@@ -79,20 +82,28 @@
             <article class="post ">
               <h4>{feature.name}</h4>
               <div class="media">
-                <div class="square-left mr-5" use:gradient data-gradient={feature.nr}>
+                <div class="square-left mr-5" use:gradient data-hashed={feature.nr}>
                   <span class="number">{feature.nr}</span>
                 </div>
                 <div class="media-content">
                   <div class="content">
                     <p>
-                      {fromWei(feature.amount)} eth per pledge
-
-                      {#if feature.claimedAt}
+                      {#if feature.claimedAt && false}
+                        <span>{ended ? 'closeable since' : ''}</span>
+                      {:else}
+                        {fromWei(feature.amount)} eth per pledge
+                      {/if}
+                      {#if feature.claimedAt && feature.challengeUntil}
+                        <span class="tag px-3" class:is-primary={ended[feature.nr]} class:is-warning={!ended[feature.nr]}>
+                          <span  class="pr-1" >{ended[feature.nr] ? 'closeable since' : 'claimed, challenge end in'}</span>
+                          <Timer bind:ended={ended[feature.nr]} end={feature.challengeUntil * 1000} />
+                        </span>
+                      {:else if feature.claimedAt}
                         <span class="tag is-danger">contested</span>
                       {:else if feature.claimedAt}
                         <span class="tag is-warning">claimed</span>
                       {:else}
--                      <span class="tag is-success">open</span>
+                        <span class="tag is-success">open</span>
                       {/if}
 
                     </p>
@@ -100,17 +111,12 @@
                 </div>
                 <div class="media-right is-size-3" >
                   <span class="has-text-grey"
-                  >{feature.pledges}{#if feature.claimedAt > feature.pledges}
-                    <span class="has-text-red">/{feature.pledge - feature.claimedAt}</span>
+                  >{feature.pledges}{#if feature.challengingPledge > 0 }
+                    <span class="has-text-red">/{feature.challengingPledge}</span>
                   {/if}
-
-
-                    pledges <i class="fa fa-area-chart ml-3" /></span>
+                  pledges <i class="fa fa-area-chart ml-3" /></span>
                 </div>
               </div>
-
-              {feature.claimedAt}
-
             </article>
 
             <nav class="level">
@@ -120,10 +126,10 @@
                     <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>[Pledge]</button>
                   </div>
                   <div class="level-item">
-                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
+                    <button disabled={ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
                   </div>
                   <div class="level-item">
-                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Close</button>
+                    <button disabled={!ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Close</button>
                   </div>
                 {:else}
                   <div class="level-item">
@@ -132,6 +138,13 @@
                 {/if}
               </div>
             </nav>
+
+            <div class="mt-5 has-text-centered">
+               x{feature.challengeUntil}x
+              {feature.challenge}
+              {ended[feature.nr]}
+              </div>
+
 
           </div>
 

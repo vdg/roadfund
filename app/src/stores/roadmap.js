@@ -92,13 +92,15 @@ const createStore = () => {
     const features = channels.map(({ amount, totalAcquired }, i) => ({
       nr: i + 1,
       amount,
-      pledges: totalAcquired,
+      pledges: parseInt(totalAcquired),
       open: open[i],
       name: names[i],
       featureURI: featureURI[i],
-      challenge: challenge[i],
+      challenge: parseInt(challenge[i]),
       claimedAt: parseInt(claimedAt[i]),
-      claimedThreshold: claimedThreshold[i]
+      challengeUntil: parseInt(claimedAt[i]) + parseInt(challenge[i]),
+      claimedThreshold: parseInt(claimedThreshold[i]),
+      challengingPledge: parseInt(totalAcquired) - parseInt(claimedThreshold[i])
     }))
 
     console.log(

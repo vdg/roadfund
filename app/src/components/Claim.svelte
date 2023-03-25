@@ -71,7 +71,7 @@
 
 
 <Modal bind:this={modal} active={!!active} noCloseButton={true}>
-  <div class="modal-card is-large" use:gradient data-gradient={active}>
+  <div class="modal-card is-large" use:gradient data-hashed={active}>
     <section class="modal-card-body" >
       <h2 class="title">{feature.name}</h2>
       <h3 class="subtitle mt-5">Friendly warning: Make sure you're in sync with pledgers before claiming, or you might watch your funds slip away!</h3>
