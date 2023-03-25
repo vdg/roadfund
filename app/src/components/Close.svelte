@@ -46,10 +46,11 @@
   export const close = () => {
 
     const roadfund = blockchain.roadfund($chainId)
+    const penalty = BigNumber.from(feature.amount).mul(feature.challengingPledge)
 
     return {
       call: roadfund.close,
-      params: [ address, active - 1 ],
+      params: [ address, active - 1, { value: penalty }  ],
       onReceipt: (rcpt) => {
 
         console.log('close done', rcpt)
@@ -71,6 +72,10 @@
 
       <h3 class="subtitle mt-5">Close this feature and get the funds pledged!</h3>
 
+      {#if feature.challengingPledge}
+        <h3 class="subtitle">This feature has been challenged by {feature.challengingPledge} pledge.
+          You will have to pay a penalty...</h3>
+      {/if}
     </section>
 
     <footer class="modal-card-foot">

@@ -464,4 +464,113 @@ describe('Roadfund', function () {
         .close(roadmap.address, 1, { value: expandToNDecimals(15, 15) })
     })
   })
+
+  // *********** *********** *********** *********** *********** ***********
+
+  describe('Using roadmap (edge cases)', function () {
+    let roadfund
+    let roadmap
+    let owner
+
+    it('initialize project & add features A & B', async function () {
+      void ({ roadfund, roadmap } = await loadFixture(
+        deployRoadfundAndCreateProject
+      ))
+
+      const [owner, creator] = await ethers.getSigners()
+
+      const tx1 = await roadfund.connect(creator).addFeature(
+        roadmap.address,
+        'feature A',
+        'ipfs://',
+        expandToNDecimals(1, 15), // 1 finney
+        60 * 10 // 10 minutes challenge duration
+      )
+      await tx1.wait()
+
+      const tx2 = await roadfund.connect(creator).addFeature(
+        roadmap.address,
+        'feature B',
+        'ipfs://',
+        expandToNDecimals(1, 15), // 1 finney
+        60 * 10 // 10 minutes challenge duration
+      )
+      await tx2.wait()
+
+      return expect(true).to.equal(true)
+
+      //return expect(decoded.singleton).to.equal(rouge.address);
+    })
+
+    it('creator claim feature A', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      const tx = await roadfund.connect(creator).claim(roadmap.address, 0)
+      const rcpt = await tx.wait()
+    })
+
+    it('creator close feature A (no pledge)', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      await increaseTime('10m')
+
+      expect((await roadfund.getInfos(roadmap.address)).open[0]).to.equal(true)
+
+      await expect(() =>
+        roadfund.connect(creator).close(roadmap.address, 0)
+      ).to.changeEtherBalance(creator, expandToNDecimals(0, 15))
+
+      expect((await roadfund.getInfos(roadmap.address)).open[0]).to.equal(false)
+    })
+
+    ///** ****************** */
+
+    it('creator claim feature B', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      const tx = await roadfund.connect(creator).claim(roadmap.address, 1)
+      const rcpt = await tx.wait()
+    })
+
+    it('user Z pledge 3 tokens for feature B', async function () {
+      const [owner, creator, userX, userY, userZ] = await ethers.getSigners()
+
+      const tx = await roadfund
+        .connect(userX)
+        .pledge(roadmap.address, 1, 3, { value: expandToNDecimals(3, 15) })
+
+      const rcpt = await tx.wait()
+      const { channels } = await roadfund.getInfos(roadmap.address)
+      expect(channels[1].totalAcquired).to.equal(3)
+    })
+
+    it('creator close feature B (revert, successful contest)', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      await increaseTime('10m')
+
+      await expect(
+        roadfund
+          .connect(creator)
+          .close(roadmap.address, 1, { value: expandToNDecimals(4.5, 15) })
+      ).to.be.revertedWith('contested')
+    })
+
+    it('creator re-claim feature B again', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      const tx = await roadfund.connect(creator).claim(roadmap.address, 1)
+      const rcpt = await tx.wait()
+    })
+
+    it('creator close feature B (wait another challenge duration)', async function () {
+      const [owner, creator] = await ethers.getSigners()
+
+      await increaseTime('10m')
+
+      const tx = await roadfund
+        .connect(creator)
+        .close(roadmap.address, 1, { value: expandToNDecimals(4.5, 15) })
+    })
+  })
 })

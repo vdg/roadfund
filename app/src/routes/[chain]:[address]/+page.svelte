@@ -91,13 +91,14 @@
                 <div class="media-content">
                   <div class="content">
                     <p>
-                      {#if feature.claimedAt && false}
-                        <span>{ended ? 'closeable since' : ''}</span>
+                      {#if !feature.open}
+                        this feature has been closed
                       {:else}
                         {feature.challenge}s challenge
                       {/if}
 
-                      {#if feature.contestedPercent > 0.12}
+                      {#if !feature.open}
+                      {:else if feature.contestedPercent > 0.12}
                         <span class="tag is-danger">contested</span>
                       {:else if feature.claimedAt && feature.challengeUntil}
                         <span class="tag px-3" class:is-primary={ended[feature.nr]} class:is-warning={ended[feature.nr] === false}>
@@ -123,6 +124,7 @@
               </div>
             </article>
 
+            {#if feature.open}
             <nav class="level">
               <div class="level-right">
                 {#if $signerAddress === live.creator}
@@ -146,9 +148,14 @@
                 {/if}
               </div>
             </nav>
+            {/if}
 
-            <div class="mt-5 has-text-centered">
-               x{feature.contestedPercent}x
+            <div class="mt-5 has-text-centered xis-hidden">
+              DEBUG
+              open={feature.open}
+              At={feature.claimedAt}
+
+              pct={feature.contestedPercent}
               y{feature.challengingPledge}y
               {ended[feature.nr]}
               </div>

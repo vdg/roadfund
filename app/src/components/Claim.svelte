@@ -16,12 +16,11 @@
   import roadmap from '$stores/roadmap.js'
 
   import Modal from '$components/Modal.svelte'
-  import TxButton from '$components/TxAction/Button.svelte'
+  //import TxButton from '$components/TxAction/Button.svelte'
 
   import TxAction from '$components/TxAction/index.svelte'
   import TxActionButton from '$components/TxAction/TxActionButton.svelte'
   import TxActionFeedback from '$components/TxAction/TxActionFeedback.svelte'
-
 
   export let active // contain feature number
   export let address

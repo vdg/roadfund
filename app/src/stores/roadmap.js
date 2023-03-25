@@ -99,8 +99,8 @@ const createStore = () => {
       challenge: parseInt(challenge[i]),
       contestedPercent:
         parseInt(claimedAt[i]) && parseInt(totalAcquired)
-          ? parseInt(totalAcquired) -
-            parseInt(claimedThreshold[i]) / parseInt(totalAcquired)
+          ? (parseInt(totalAcquired) - parseInt(claimedThreshold[i])) /
+            parseInt(totalAcquired)
           : 0,
       claimedAt: parseInt(claimedAt[i]),
       challengeUntil: parseInt(claimedAt[i]) + parseInt(challenge[i]),

@@ -114,7 +114,7 @@
         </div>
         <div class="buttons has-addons is-centered ml-5">
           <TxActionButton class="button is-primary"
-          >{#if feature.claimedAt}Challenge pledge{/if}</TxActionButton>
+          >{#if feature.claimedAt}Challenge {/if}Pledge</TxActionButton>
 
           <button class="button is-primary is-inverted ml-5" on:click={cancel}>Cancel</button>
       </TxAction>

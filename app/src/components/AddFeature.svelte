@@ -10,12 +10,16 @@
   import { gradient } from '$lib/actions/gradient.js'
 
   import Modal from '$components/Modal.svelte'
-  import TxButton from '$components/TxAction/Button.svelte'
+
+  import TxAction from '$components/TxAction/index.svelte'
+  import TxActionButton from '$components/TxAction/TxActionButton.svelte'
+  import TxActionFeedback from '$components/TxAction/TxActionFeedback.svelte'
 
   export let active
   export let address
 
   let modal
+  let action
 
   let data = {
     pledge: 0.001,
@@ -150,16 +154,25 @@
       </div>
 
     </section>
+
     <footer class="modal-card-foot">
-      {#if Object.keys(control.error).length}<p class="help is-danger pr-3">
-        Please fix errors above
-      </p>{/if}
+      <TxAction
+        bind:this={action} let:callId
+        submitCtx={add}
+      >
+        <div class="is-centered">
+          {#if Object.keys(control.error).length}<p class="help is-danger pr-3">
+          Please fix errors above
+          </p>{/if}
+          <TxActionFeedback />
+        </div>
+        <div class="buttons has-addons is-centered ml-5">
+          <TxActionButton class="button is-primary"
+          >Add feature</TxActionButton>
+          <button class="button is-primary is-inverted ml-5" on:click={cancel}>Cancel</button>
+      </TxAction>
+   </footer>
 
-      <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt" submitCtx={add}
-      >Add feature</TxButton>
-      <button class="button is-black" on:click={cancel}>Cancel</button>
-
-    </footer>
   </div>
 </Modal>
 

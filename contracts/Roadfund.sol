@@ -215,7 +215,8 @@ contract Roadfund is Ownable {
 
     // Refuse to close contested features
     require(
-      (100 * challengePledges) / _pledges[rouge][channelId] < CONTEST_LIMIT,
+      _pledges[rouge][channelId] == 0 ||
+        (100 * challengePledges) / _pledges[rouge][channelId] < CONTEST_LIMIT,
       'contested'
     );
 
