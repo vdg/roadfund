@@ -109,12 +109,12 @@
                     </p>
                   </div>
                 </div>
-                <div class="media-right is-size-3" >
+                <div class="media-right is-size-4" >
                   <span class="has-text-grey"
                   >{feature.pledges}{#if feature.challengingPledge > 0 }
                     <span class="has-text-red">/{feature.challengingPledge}</span>
                   {/if}
-                  pledges <i class="fa fa-area-chart ml-3" /></span>
+                  pledges <i class="fa fa-heart" /></span>
                 </div>
               </div>
             </article>
@@ -144,8 +144,8 @@
             </nav>
 
             <div class="mt-5 has-text-centered">
-               x{feature.challengeUntil}x
-              {feature.challenge}
+               x{feature.claimedAt}x
+              y{feature.challengingPledge}y
               {ended[feature.nr]}
               </div>
 

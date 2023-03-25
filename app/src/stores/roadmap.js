@@ -100,7 +100,9 @@ const createStore = () => {
       claimedAt: parseInt(claimedAt[i]),
       challengeUntil: parseInt(claimedAt[i]) + parseInt(challenge[i]),
       claimedThreshold: parseInt(claimedThreshold[i]),
-      challengingPledge: parseInt(totalAcquired) - parseInt(claimedThreshold[i])
+      challengingPledge: parseInt(claimedAt[i])
+        ? parseInt(totalAcquired) - parseInt(claimedThreshold[i])
+        : 0
     }))
 
     console.log(
