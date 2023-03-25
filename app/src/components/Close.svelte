@@ -16,9 +16,12 @@
   import roadmap from '$stores/roadmap.js'
 
   import Modal from '$components/Modal.svelte'
+  import TxButton from '$components/TxAction/Button.svelte'
+
   import TxAction from '$components/TxAction/index.svelte'
   import TxActionButton from '$components/TxAction/TxActionButton.svelte'
   import TxActionFeedback from '$components/TxAction/TxActionFeedback.svelte'
+
 
   export let active // contain feature number
   export let address
@@ -28,10 +31,6 @@
 
   $: live = $roadmap[address] || {}
   $: feature = live.features ? live.features[active - 1] || {} : {}
-
-  let data = {
-    qty: 1
-  }
 
   const control = {
     isWaiting: false,
@@ -44,25 +43,21 @@
     if (modal) modal.close()
   }
 
-  export const pledge = () => {
-    control.error = {}
-
-    if (!data.qty) {
-      control.error.qty = 'This field is required'
-    }
-
-    if (Object.keys(control.error).length) return false
+  export const close = () => {
 
     const roadfund = blockchain.roadfund($chainId)
 
     return {
-      call: roadfund.pledge,
-      params: [ address, active - 1, data.qty, { value: BigNumber.from(feature.amount).mul(data.qty) } ],
+      call: roadfund.close,
+      params: [ address, active - 1 ],
       onReceipt: (rcpt) => {
-        console.log('pledge done', rcpt)
+
+        console.log('close done', rcpt)
         roadmap.refresh(address)
+
         cancel()
       }
+
     }
   }
 
@@ -74,37 +69,14 @@
     <section class="modal-card-body" >
       <h2 class="title">{feature.name}</h2>
 
-      {#if feature.claimedAt}
-        <h3 class="subtitle">This feature has already been claimed by the roadmap owner. But you can challenge
-          his claim if you disagree.
-        </h3>
-      {:else}
-        <h3 class="subtitle">How many tokens to you want to pledge?</h3>
-      {/if}
-
-      <div class="column is-full">
-        <div class="field">
-          <p class="control">
-            <input
-              id="qty"
-              class="input"
-              class:is-danger={control.error.qty}
-              type="number"
-              bind:value={data.qty} />
-          </p>
-          {#if control.error.qty}<p class="help is-danger">
-            {control.error.qty}
-          </p>{/if}
-          <label for="qty" class="label mt-3">{fromWei(feature.amount)} e / token</label>
-          <h3 class="subtitle"><em>Price to pay : { fromWei(BigNumber.from(feature.amount).mul(data.qty)) } e</em></h3>
-        </div>
-      </div>
+      <h3 class="subtitle mt-5">Close this feature and get the funds pledged!</h3>
 
     </section>
+
     <footer class="modal-card-foot">
       <TxAction
         bind:this={action} let:callId
-        submitCtx={pledge}
+        submitCtx={close}
       >
         <div class="is-centered">
           {#if Object.keys(control.error).length}<p class="help is-danger pr-3">
@@ -114,11 +86,12 @@
         </div>
         <div class="buttons has-addons is-centered ml-5">
           <TxActionButton class="button is-primary"
-          >{#if feature.claimedAt}Challenge pledge{/if}</TxActionButton>
+          >Close</TxActionButton>
 
           <button class="button is-primary is-inverted ml-5" on:click={cancel}>Cancel</button>
       </TxAction>
    </footer>
+
   </div>
 </Modal>
 

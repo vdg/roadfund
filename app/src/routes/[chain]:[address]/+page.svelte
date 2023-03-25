@@ -25,6 +25,7 @@
   import AddFeature from '$components/AddFeature.svelte'
   import Pledge from '$components/Pledge.svelte'
   import Claim from '$components/Claim.svelte'
+  import Close from '$components/Close.svelte'
   import Timer from '$components/Timer.svelte'
 
   export let data
@@ -37,6 +38,7 @@
   let addActive = false
   let pledgeActive = 0
   let claimActive = 0
+  let closeActive = 0
 
   const ended = {}
 
@@ -47,6 +49,7 @@
   <AddFeature bind:active={addActive} {address} />
   <Pledge bind:active={pledgeActive} {address} />
   <Claim bind:active={claimActive} {address} />
+  <Close bind:active={closeActive} {address} />
 
   <div class="columns">
     <div class="column is-4">
@@ -93,13 +96,14 @@
                       {:else}
                         {feature.challenge}s challenge
                       {/if}
-                      {#if feature.claimedAt && feature.challengeUntil}
+
+                      {#if feature.contestedPercent > 0.12}
+                        <span class="tag is-danger">contested</span>
+                      {:else if feature.claimedAt && feature.challengeUntil}
                         <span class="tag px-3" class:is-primary={ended[feature.nr]} class:is-warning={ended[feature.nr] === false}>
                           <span  class="pr-1" >{ended[feature.nr] ? 'closeable since' : 'claimed, challenge end in'}</span>
                           <Timer bind:ended={ended[feature.nr]} end={feature.challengeUntil * 1000} />
                         </span>
-                      {:else if feature.claimedAt}
-                        <span class="tag is-danger">contested</span>
                       {:else if feature.claimedAt}
                         <span class="tag is-warning">claimed</span>
                       {:else}
@@ -131,7 +135,7 @@
                     <button disabled={ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
                   </div>
                   <div class="level-item">
-                    <button disabled={!ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Close</button>
+                    <button disabled={!ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {closeActive = feature.nr}}>Close</button>
                   </div>
                 {:else}
                   <div class="level-item">
@@ -144,7 +148,7 @@
             </nav>
 
             <div class="mt-5 has-text-centered">
-               x{feature.claimedAt}x
+               x{feature.contestedPercent}x
               y{feature.challengingPledge}y
               {ended[feature.nr]}
               </div>
@@ -177,6 +181,11 @@
 <style lang="scss">
 
   @import '../../scss/_variables.scss';
+
+  .has-text-red {
+    color: #f00;
+
+  }
 
 
   .media {

@@ -20,6 +20,8 @@
   import TxButton from '$components/TxAction/Button.svelte'
   import RoadmapList from '$components/RoadmapList.svelte'
   import Unsupported from '$components/Unsupported.svelte'
+  import Roadmap from '$components/Roadmap.svelte'
+  import CreateRoadmap from '$components/CreateRoadmap.svelte'
 
   import roadmap from '$stores/roadmap.js'
 
@@ -57,16 +59,20 @@
 
   $: supported = $signerAddress && blockchain.isSupported($chainId)
 
+  let createActive = false
+
 </script>
 
 {#if $signerAddress && supported}
+
+  <CreateRoadmap bind:active={createActive} />
 
   <RoadmapList title="Your very own roadmaps!" addresses={myRoadmaps}>
 
     <nav class="level mt-5">
       <div class="level-item has-text-centered">
-        <TxButton disabled={!$signerAddress} class="mt-4 is-primary is-block is-large" submitCtx={createCtx}
-        >Create a roadmap</TxButton>
+        <button disabled={!$signerAddress} class="button mt-4 is-primary is-block is-large" on:click={() => { createActive = true }}
+        >Create a roadmap</button>
       </div>
     </nav>
 

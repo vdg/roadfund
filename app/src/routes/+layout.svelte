@@ -19,7 +19,7 @@
 <nav class="navbar topNav is-transparent">
   <div class="container">
     <div class="navbar-brand">
-      <a class="navbar-item" href="../">
+      <a class="navbar-item" href="/">
         <span class="is-size-6"><b>Roadfund</b></span>
         <img width="112" height="28" class="is-hidden" />
       </a>
@@ -35,7 +35,7 @@
     </div>
     <div id="topNav" class="navbar-menu" class:is-active={menu}>
       <div class="navbar-start">
-        <a class="navbar-item" href="/">Home</a>
+        <a class="navbar-item" href="/help">Help</a>
         <a class="navbar-item" href="/about">About</a>
       </div>
       <div class="navbar-end">

@@ -97,6 +97,11 @@ const createStore = () => {
       name: names[i],
       featureURI: featureURI[i],
       challenge: parseInt(challenge[i]),
+      contestedPercent:
+        parseInt(claimedAt[i]) && parseInt(totalAcquired)
+          ? parseInt(totalAcquired) -
+            parseInt(claimedThreshold[i]) / parseInt(totalAcquired)
+          : 0,
       claimedAt: parseInt(claimedAt[i]),
       challengeUntil: parseInt(claimedAt[i]) + parseInt(challenge[i]),
       claimedThreshold: parseInt(claimedThreshold[i]),
@@ -190,7 +195,6 @@ const createStore = () => {
 
   chainId.subscribe(($chainId) => {
     if (!$chainId || !browser) return
-    console.log('xxxx new chain id', $chainId)
     // TODO unwatch ...
     roadmapAddresses = JSON.parse(
       localStorage.getItem(roadmapKey($chainId)) || '[]'

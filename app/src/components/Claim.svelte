@@ -74,6 +74,7 @@
   <div class="modal-card is-large" use:gradient data-hashed={active}>
     <section class="modal-card-body" >
       <h2 class="title">{feature.name}</h2>
+
       <h3 class="subtitle mt-5">Friendly warning: Make sure you're in sync with pledgers before claiming, or you might watch your funds slip away!</h3>
 
     </section>
@@ -97,20 +98,6 @@
       </TxAction>
    </footer>
 
-
-
-
-
-    <footer class="modal-card-foot">
-      {#if Object.keys(control.error).length}<p class="help is-danger pr-3">
-        Please fix errors above
-      </p>{/if}
-
-      <TxButton disabled={!$signerAddress} class="mt-4 button is-primary is-block is-alt" submitCtx={claim}
-      >Claim</TxButton>
-      <button class="button is-primary is-inverted" on:click={cancel}>Cancel</button>
-
-    </footer>
   </div>
 </Modal>
 

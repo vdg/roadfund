@@ -28,11 +28,11 @@
     <span>{call.errMsg || 'tx failed'}</span>
     <Icon name="times" />
   </span>
-{:else if call.step === 12}
+{:else if call.step === 1}
   <span class="icon-text" /><span>waiting wallet</span><span class="icon"
     ><span class="loader" />
   </span>
-{:else if call.step === 1}
+{:else if call.step === 2}
   <span class="icon-text">
     <span class="icon mr-1"><span class="pending" /></span>
     <a
