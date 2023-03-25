@@ -46,10 +46,10 @@
             <div class="field is-grouped">
               <p class="control">
                 <a
-                  class="button is-small"
+                  class="button shadowed"
                   on:click={() => blockchain.connect()}>
                   <span class="icon">
-                    <i class="fa fa-user-plus" />
+                    <i class="fa fa-link" />
                   </span>
                   <span> Connect </span>
                 </a>
@@ -129,6 +129,16 @@
 
   .modal-card-foot {
     justify-content: flex-end;
+  }
+
+  .shadowed {
+    color: #eee;
+    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6);
+    &:hover,
+    &.is-hovered {
+      color: #fff;
+      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+    }
   }
 
   $primary: #000;

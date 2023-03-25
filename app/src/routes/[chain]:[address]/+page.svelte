@@ -86,7 +86,7 @@
               <h4>{feature.name}</h4>
               <div class="media">
                 <div class="square-left mr-5" use:gradient data-hashed={feature.nr}>
-                  <span class="number">#{feature.nr}2222</span>
+                  <span class="number shadowed">#{feature.nr}</span>
                 </div>
                 <div class="media-content">
                   <div class="content">
@@ -208,8 +208,6 @@
         font-size: 24px;
         margin: 0;
         background: transparent;
-        color: #fff;
-        text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.5);
       }
 
     }
