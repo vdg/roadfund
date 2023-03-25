@@ -73,7 +73,7 @@
     <section class="modal-card-body">
       <h2 class="title">Add a feature</h2>
 
-      <h3 class="subtitle mt-4">Briefly describe the feature for user consideration</h3>
+      <h3 class="subtitle obscured mt-4">Briefly describe the feature for user consideration</h3>
 
       <div class="column is-full">
         <div class="field">
@@ -93,7 +93,7 @@
         </div>
       </div>
 
-      <h3 class="subtitle mt-4">IPFS URI for detailed feature metadata (see help)</h3>
+      <h3 class="subtitle obscured mt-4">IPFS URI for detailed feature metadata (see help)</h3>
 
       <div class="column is-full">
         <div class="field">
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <h3 class="subtitle mt-4">Minimum pledge amount for voting or challenging (in ETH)</h3>
+      <h3 class="subtitle obscured mt-4">Minimum pledge amount for voting or challenging (in ETH)</h3>
 
       <div class="column is-half">
         <div class="field">
@@ -133,7 +133,7 @@
         </div>
       </div>
 
-      <h3 class="subtitle mt-4">Minimum challenge duration before funds can be withdrawn</h3>
+      <h3 class="subtitle obscured mt-4">Minimum challenge duration before funds can be withdrawn</h3>
 
       <div class="column is-half">
         <div class="field">

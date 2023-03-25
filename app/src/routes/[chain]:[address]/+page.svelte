@@ -86,7 +86,7 @@
               <h4>{feature.name}</h4>
               <div class="media">
                 <div class="square-left mr-5" use:gradient data-hashed={feature.nr}>
-                  <span class="number shadowed">#{feature.nr}</span>
+                  <span class="number obscured">#{feature.nr}</span>
                 </div>
                 <div class="media-content">
                   <div class="content">
@@ -150,7 +150,7 @@
             </nav>
             {/if}
 
-            <div class="mt-5 has-text-centered xis-hidden">
+            <div class="mt-5 has-text-centered is-hidden">
               DEBUG
               open={feature.open}
               At={feature.claimedAt}

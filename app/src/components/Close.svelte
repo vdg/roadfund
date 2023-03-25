@@ -70,7 +70,7 @@
     <section class="modal-card-body" >
       <h2 class="title">{feature.name}</h2>
 
-      <h3 class="subtitle mt-5">Close this feature and get the funds pledged!</h3>
+      <h3 class="subtitle obscured mt-5">Close this feature and get the funds pledged!</h3>
 
       {#if feature.challengingPledge}
         <h3 class="subtitle">This feature has been challenged by {feature.challengingPledge} pledge.

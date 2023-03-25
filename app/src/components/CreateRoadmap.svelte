@@ -88,7 +88,7 @@
     <section class="modal-card-body">
       <h2 class="title">Create a new roadmap</h2>
 
-      <h3 class="subtitle mt-4">Add an IPFS URI for customizing your roadmap metadata (see help)</h3>
+      <h3 class="subtitle obscured mt-4">Add an IPFS URI for customizing your roadmap metadata (see help)</h3>
 
       <div class="column is-full">
         <div class="field">

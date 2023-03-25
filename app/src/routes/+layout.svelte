@@ -18,9 +18,9 @@
 
 <nav class="navbar topNav is-transparent">
   <div class="container">
-    <div class="navbar-brand">
+    <div class="navbar-brand shadowed">
       <a class="navbar-item" href="/">
-        <span class="is-size-6"><b>Roadfund</b></span>
+        <span class="is-size-6 has-text-weight-bold"><b>Roadfund</b></span>
         <img width="112" height="28" class="is-hidden" />
       </a>
       <div class="navbar-burger burger" class:is-active={menu}         on:click={() => {
@@ -33,20 +33,20 @@
         <span />
       </div>
     </div>
-    <div id="topNav" class="navbar-menu" class:is-active={menu}>
-      <div class="navbar-start">
+    <div id="topNav" class="navbar-menu " class:is-active={menu}>
+      <div class="navbar-start shadowed">
         <a class="navbar-item" href="/help">Help</a>
         <a class="navbar-item" href="/about">About</a>
       </div>
       <div class="navbar-end">
-        <div class="navbar-item">
+        <div class="navbar-item shadowed">
           {#if $signerAddress}
             {formatAddress($signerAddress)}
           {:else}
             <div class="field is-grouped">
               <p class="control">
                 <a
-                  class="button shadowed"
+                  class="button"
                   on:click={() => blockchain.connect()}>
                   <span class="icon">
                     <i class="fa fa-link" />
@@ -131,13 +131,31 @@
     justify-content: flex-end;
   }
 
+  .obscured {
+    color: #fff;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.6);
+  }
+
   .shadowed {
     color: #eee;
-    text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.6);
+    text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.4);
     &:hover,
     &.is-hovered {
       color: #fff;
       text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+    }
+    a {
+      font-weight: $weight-semibold;
+      color: #eef;
+      text-shadow: 3px 3px 3px rgba(0, 0, 0, 0.4);
+      &:hover,
+      &.is-hovered {
+        font-weight: $weight-semibold;
+        color: #bbf;
+        text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
+      }
+
+
     }
   }
 
