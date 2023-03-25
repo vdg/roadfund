@@ -12,7 +12,7 @@
 </script>
 
 {#if call.err || $txAction.control.err}
-  <button class="button is-outlined is-info" on:click={$txAction.reset}>
+  <button class="button is-primary is-inverted" on:click={$txAction.reset}>
     Try again?
   </button>
 {:else}

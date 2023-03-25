@@ -5,7 +5,7 @@
       "chainId": "1337",
       "contracts": {
         "Roadfund": {
-          "address": "0xce6D82175F15323aae177C80e8cF34be7A58039c",
+          "address": "0xf515446eE710Dc23BA64dC7E29c6D08d4476Bf89",
           "abi": [
             {
               "inputs": [
@@ -193,7 +193,7 @@
                 },
                 {
                   "internalType": "address payable",
-                  "name": "penaltiesReceipient",
+                  "name": "penaltiesRecipient",
                   "type": "address"
                 }
               ],
@@ -219,14 +219,14 @@
               "name": "getInfos",
               "outputs": [
                 {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
                   "internalType": "string",
                   "name": "uri",
                   "type": "string"
-                },
-                {
-                  "internalType": "bool",
-                  "name": "isCreator",
-                  "type": "bool"
                 },
                 {
                   "components": [
@@ -259,6 +259,11 @@
                   "internalType": "struct Rouge.Channel[]",
                   "name": "channels",
                   "type": "tuple[]"
+                },
+                {
+                  "internalType": "address",
+                  "name": "penaltiesRecipient",
+                  "type": "address"
                 },
                 {
                   "internalType": "string[]",

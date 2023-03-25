@@ -25,7 +25,7 @@
   on:success
   on:error>
   <div class="field">
-    <TxActionButton class="button {importedClasses}"
+    <TxActionButton class="button is-primary {importedClasses}"
       ><slot /></TxActionButton>
     <p class="help">
       <TxActionFeedback {disabledHelp} />

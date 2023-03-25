@@ -76,29 +76,40 @@ const createStore = () => {
 
     const roadfund = blockchain.roadfund(evm.$chainId)
 
-    const { uri, isCreator, channels, cooling, names, claimedAt, claimedQty } =
-      await roadfund.getInfos(address)
+    const {
+      creator,
+      uri,
+      channels,
+      penaltiesRecipient,
+      cooling,
+      names,
+      claimedAt,
+      claimedQty
+    } = await roadfund.getInfos(address)
 
     const features = channels.map(({ amount, totalAcquired }, i) => ({
       nr: i + 1,
       amount,
-      isCreator,
       pledges: totalAcquired,
       cooling: cooling[i],
       name: names[i],
-      claimedAt: claimedAt[i],
+      claimedAt: parseInt(claimedAt[i]),
       claimedQty: claimedQty[i]
     }))
 
     console.log(
       `*** DEBUG *** data for ${address}`,
-      { uri, channels, cooling, names },
+      uri,
+      creator,
+      penaltiesRecipient,
       features
     )
 
     assign({
       [address]: {
         uri,
+        creator,
+        penaltiesRecipient,
         features,
         _chainId: evm.$chainId,
         _address: address,
@@ -106,6 +117,28 @@ const createStore = () => {
       }
     })
     emit()
+
+    // // auto discovery some logs ?
+    // const instance = blockchain.rouge(address)
+    // const events = await instance.queryFilter(
+    //   instance.filters.UpdateAuthorization(),
+    //   0
+    // )
+    // // for now it's only  "0xea99d7f1"  only
+    // for (const { args: { selector account, channelId, grant } } of events) {
+    //   if (selector !== '0xea99d7f1') continue
+    //   console.log('***** DEBUG *** creator *', e)
+    // }
+    // assign({
+    //   [address]: {
+    //     uri,
+    //     features,
+    //     _chainId: evm.$chainId,
+    //     _address: address,
+    //     _loaded: true
+    //   }
+    // })
+    // emit()
   }
 
   const refresh = async (address) => {

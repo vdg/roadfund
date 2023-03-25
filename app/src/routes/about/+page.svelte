@@ -51,6 +51,10 @@
       leading to a more efficient allocation of resources and a roadmap that better
       reflects the preferences of the software's users.
     </p>
+    <p>
+      The pledge take the form of ERC721 and can later served as POP "Proof of Pledge"
+      for the software community.
+    </p>
   </div>
   </div>
 </section>

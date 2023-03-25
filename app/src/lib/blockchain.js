@@ -119,6 +119,8 @@ const createBlockchain = () => {
     )
   }
 
+  const rouge = (address) => builder(Rouge)(address)
+
   const isSupported = (chainId) => !!Artifacts[chainId]
 
   return {
@@ -126,6 +128,7 @@ const createBlockchain = () => {
     disconnect,
     handleRougeEvent,
     roadfund,
+    rouge,
     isSupported
   }
 }

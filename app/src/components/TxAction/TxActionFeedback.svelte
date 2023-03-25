@@ -56,7 +56,7 @@
   @import '../../scss/_variables.scss';
 
   .pending {
-    border: 0.5em solid #f3f3f3;
+    border: 0.5em solid $brand;
     border-radius: 60%;
     border-top: 0.3em solid $primary;
     border-bottom: 0.3em solid $primary;

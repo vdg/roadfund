@@ -42,15 +42,16 @@ contract Roadfund is Ownable {
   }
 
   uint256 private _nonce;
-  address payable _penaltiesReceipient;
+
+  mapping(Rouge => address payable) private _creator;
+  mapping(Rouge => address payable) private _penaltiesRecipient;
 
   // Function to create a new roadmap (Rouge instance)
   function createRoadmap(
     string memory uri,
-    address payable penaltiesReceipient
+    address payable penaltiesRecipient
   ) public returns (RougeProxy proxy) {
     _nonce += 1;
-    _penaltiesReceipient = penaltiesReceipient;
 
     // Create special admin authorization for the message sender
     uint16[] memory channels = new uint16[](1);
@@ -73,13 +74,8 @@ contract Roadfund is Ownable {
       _nonce
     );
 
-    // XXX debug
-    // string memory v = Rouge(address(proxy)).VERSION();
-    // console.log(
-    //     "deploying new roadmap on %s from Rouge version %s",
-    //     address(proxy),
-    //     v
-    // );
+    _creator[Rouge(address(proxy))] = payable(_msgSender());
+    _penaltiesRecipient[Rouge(address(proxy))] = penaltiesRecipient;
 
     return proxy;
   }
@@ -158,20 +154,35 @@ contract Roadfund is Ownable {
 
   // Mappings to store claim information
   mapping(Rouge => mapping(uint16 => uint256)) private _claimedAt;
-  mapping(Rouge => mapping(uint16 => uint16)) private _claimedQty;
+  mapping(Rouge => mapping(uint16 => uint16)) private _claimedThreshold;
 
   // Function to claim funds for a specific feature
   function claim(Rouge rouge, uint16 channelId) public {
     // Check if the message sender is the roadmap creator
     require(
-      rouge.hasRole(_msgSender(), this.createRoadmap.selector, CHANNEL_LIMIT)
+      rouge.hasRole(_msgSender(), this.createRoadmap.selector, CHANNEL_LIMIT),
+      'not creator'
+    );
+
+    // Ensure the feature is not claimed or the cooling period has passed
+    require(
+      _claimedAt[rouge][channelId] == 0 ||
+        block.timestamp - _claimedAt[rouge][channelId] >=
+        _featureCooling[rouge][channelId],
+      'not claimable'
     );
 
     _claimedAt[rouge][channelId] = block.timestamp;
 
-    // TODO calculate a lower amount preventing malvolent creator ?
-
-    _claimedQty[rouge][channelId] = _pledges[rouge][channelId];
+    if (_claimedThreshold[rouge][channelId] > 0) {
+      // raising threshold a bit so feature may be closed again, but new cooling period start and easier to re-contest
+      _claimedThreshold[rouge][channelId] =
+        _claimedThreshold[rouge][channelId] +
+        (_pledges[rouge][channelId] - _claimedThreshold[rouge][channelId]) /
+        3;
+    } else {
+      _claimedThreshold[rouge][channelId] = _pledges[rouge][channelId];
+    }
   }
 
   // Function to close a specific feature and withdraw funds
@@ -190,7 +201,13 @@ contract Roadfund is Ownable {
     );
 
     uint16 coolingPledges = _pledges[rouge][channelId] -
-      _claimedQty[rouge][channelId];
+      _claimedThreshold[rouge][channelId];
+
+    console.log(
+      'coolingPledges = %s (%s%%)',
+      coolingPledges,
+      (100 * coolingPledges) / _pledges[rouge][channelId]
+    );
 
     // Refuse to close contested features
     require(
@@ -202,14 +219,14 @@ contract Roadfund is Ownable {
 
     // Require penalty payment for closing the feature if coolingPledges exist
     require(
-      msg.value >
+      msg.value >=
         ((coolingPledges * CONTEST_PENALTY) / 100) * channels[channelId].amount,
       'penalty unpaid'
     );
 
     // Transfer the penalty payment (or tip) to the penalties recipient
     if (msg.value > 0) {
-      _penaltiesReceipient.sendValue(msg.value);
+      _penaltiesRecipient[rouge].sendValue(msg.value);
     }
     console.log(
       'amount per pledge for [%s] =  %s  ',
@@ -226,6 +243,41 @@ contract Roadfund is Ownable {
     grantFeature(rouge, channelId, false);
   }
 
+  // Shortcut to get all local state for a roadmap
+  function getState(
+    Rouge rouge,
+    uint256 max
+  )
+    internal
+    view
+    returns (
+      bool[] memory open,
+      string[] memory names,
+      uint256[] memory cooling,
+      uint256[] memory claimedAt,
+      uint16[] memory claimedThreshold
+    )
+  {
+    bool[] memory open_ = new bool[](max);
+    string[] memory names_ = new string[](max);
+    uint256[] memory cooling_ = new uint256[](max);
+    uint256[] memory at_ = new uint256[](max);
+    uint16[] memory threshold_ = new uint16[](max);
+
+    for (uint16 i = 0; i < max; i++) {
+      open_[i] = rouge.isEnabled(rouge.acquire.selector, i);
+      names_[i] = _featureName[rouge][i];
+      cooling_[i] = _claimedAt[rouge][i];
+      at_[i] = _claimedAt[rouge][i];
+      threshold_[i] = _claimedThreshold[rouge][i];
+    }
+    open = open_;
+    names = names_;
+    cooling = cooling_;
+    claimedAt = at_;
+    claimedThreshold = threshold_;
+  }
+
   // Shortcut to get all infos we need onchain - aggregate Rouge instances + Roadfund
   function getInfos(
     Rouge rouge
@@ -233,37 +285,24 @@ contract Roadfund is Ownable {
     public
     view
     returns (
+      address creator,
       string memory uri,
-      bool isCreator,
       Rouge.Channel[] memory channels,
+      address penaltiesRecipient,
+      bool[] memory open,
       string[] memory names,
       uint256[] memory cooling,
       uint256[] memory claimedAt,
-      uint16[] memory claimedQty
+      uint16[] memory claimedThreshold
     )
   {
+    creator = _creator[rouge];
     (uri, channels, ) = rouge.getInfos();
+    penaltiesRecipient = _penaltiesRecipient[rouge];
 
-    isCreator = rouge.hasRole(
-      _msgSender(),
-      this.createRoadmap.selector,
-      CHANNEL_LIMIT
+    (open, names, cooling, claimedAt, claimedThreshold) = getState(
+      rouge,
+      channels.length
     );
-
-    string[] memory names_ = new string[](channels.length);
-    uint256[] memory cooling_ = new uint256[](channels.length);
-
-    uint256[] memory at_ = new uint256[](channels.length);
-    uint16[] memory qty_ = new uint16[](channels.length);
-
-    for (uint16 i = 0; i < channels.length; i++) {
-      names_[i] = _featureName[rouge][i];
-      cooling_[i] = _claimedAt[rouge][i];
-      at_[i] = _claimedQty[rouge][i];
-    }
-    names = names_;
-    cooling = cooling_;
-    claimedAt = at_;
-    claimedQty = qty_;
   }
 }

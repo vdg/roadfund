@@ -50,9 +50,11 @@
 
       <Roadmap {address}   />
 
-      <button class="mt-4 button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
+      {#if $signerAddress === live.creator}
+        <button class="mt-4 button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
+      {/if}
 
-      <aside class="menu mt-6">
+      <aside class="menu mt-6 is-hidden">
         <p class="menu-label">Tags</p>
         <ul class="menu-list">
           <li><span class="tag is-primary is-medium ">Dashboard</span></li>
@@ -84,29 +86,53 @@
                   <div class="content">
                     <p>
                       {fromWei(feature.amount)} eth per pledge
-                      <span class="tag">feature</span>
+
+                      {#if feature.claimedAt}
+                        <span class="tag is-danger">contested</span>
+                      {:else if feature.claimedAt}
+                        <span class="tag is-warning">claimed</span>
+                      {:else}
+-                      <span class="tag is-success">open</span>
+                      {/if}
+
                     </p>
                   </div>
                 </div>
                 <div class="media-right is-size-3" >
                   <span class="has-text-grey"
-                  >{feature.pledges} pledges <i class="fa fa-area-chart ml-3" /></span>
+                  >{feature.pledges}{#if feature.claimedAt > feature.pledges}
+                    <span class="has-text-red">/{feature.pledge - feature.claimedAt}</span>
+                  {/if}
+
+
+                    pledges <i class="fa fa-area-chart ml-3" /></span>
                 </div>
               </div>
 
-              <nav class="level">
-                <div class="level-right">
+              {feature.claimedAt}
+
+            </article>
+
+            <nav class="level">
+              <div class="level-right">
+                {#if $signerAddress === live.creator}
                   <div class="level-item">
-                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>[Pledge]</button>
                   </div>
                   <div class="level-item">
                     <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
                   </div>
-                </div>
-              </nav>
+                  <div class="level-item">
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Close</button>
+                  </div>
+                {:else}
+                  <div class="level-item">
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
+                  </div>
+                {/if}
+              </div>
+            </nav>
 
-
-            </article>
           </div>
 
         {/each}

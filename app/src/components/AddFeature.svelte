@@ -64,7 +64,7 @@
     <section class="modal-card-body has-background-light">
       <h2 class="title">Add a feature</h2>
 
-      <div class="column is-one-quarter">
+      <div class="column is-half">
         <div class="field">
           <label for="pledge" class="label">Pledge (in ETH)</label>
           <p class="control">
@@ -82,7 +82,7 @@
         </div>
       </div>
 
-      <div class="column is-two-thirds">
+      <div class="column is-full">
         <div class="field">
           <label for="label" class="label">Description</label>
           <p class="control">

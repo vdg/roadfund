@@ -4,7 +4,12 @@
 
   import { formatAddress } from '$lib/utils.js'
 
+  import roadmap from '$stores/roadmap.js'
+
   export let address
+
+
+  $: live = $roadmap[address] || {}
 
 </script>
 
@@ -23,13 +28,14 @@
           </figure>
         </div>
         <div class="media-content">
-          {formatAddress( address )}
+          <a>{formatAddress( address )}</a>
         </div>
       </div>
       <div class="content">
         Lorem ipsum dolor
-        Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-        <a href="#">#css</a> <a href="#">#responsive</a>
+        Phasellus nec iaculis mauris.
+        <br>
+        <a>by {formatAddress(live.creator)}</a>.
         <br>
         <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
       </div>

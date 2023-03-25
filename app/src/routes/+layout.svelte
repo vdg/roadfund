@@ -70,7 +70,7 @@
   </div>
 </nav>
 
-<section class="container is-max-widescreen mt-6 px-3">
+<section class="container is-max-widescreen my-6 px-3">
   <slot />
 </section>
 
@@ -91,9 +91,9 @@
   </div>
 </nav>
 
-<footer class="footer">
+<footer class="footer is-hidden">
   <div class="container">
-    <div class="content has-text-centered is-hidden">
+    <div class="content has-text-centered ">
       <div class="columns is-mobile is-centered">
         <div class="field is-grouped is-grouped-multiline">
           <div class="control">
@@ -123,9 +123,12 @@
 
   body {
     background: linear-gradient(135deg, #000000, #ffffff);
-    min-height: 100%;
     color: #fff;
+    min-height: calc(100vh - 1.6em);
+  }
 
+  .modal-card-foot {
+    justify-content: flex-end;
   }
 
   $primary: #000;
