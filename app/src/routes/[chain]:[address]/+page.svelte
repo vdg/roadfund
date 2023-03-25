@@ -91,10 +91,10 @@
                       {#if feature.claimedAt && false}
                         <span>{ended ? 'closeable since' : ''}</span>
                       {:else}
-                        {fromWei(feature.amount)} eth per pledge
+                        {feature.challenge}s challenge
                       {/if}
                       {#if feature.claimedAt && feature.challengeUntil}
-                        <span class="tag px-3" class:is-primary={ended[feature.nr]} class:is-warning={!ended[feature.nr]}>
+                        <span class="tag px-3" class:is-primary={ended[feature.nr]} class:is-warning={ended[feature.nr] === false}>
                           <span  class="pr-1" >{ended[feature.nr] ? 'closeable since' : 'claimed, challenge end in'}</span>
                           <Timer bind:ended={ended[feature.nr]} end={feature.challengeUntil * 1000} />
                         </span>
@@ -123,7 +123,9 @@
               <div class="level-right">
                 {#if $signerAddress === live.creator}
                   <div class="level-item">
-                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>[Pledge]</button>
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>
+                     {#if feature.claimedAt}Challenge {/if}Pledge <span class="is-size-7">({fromWei(feature.amount)} eth/p)</span>
+                    </button>
                   </div>
                   <div class="level-item">
                     <button disabled={ended[feature.nr]} class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {claimActive = feature.nr}}>Claim</button>
@@ -133,7 +135,9 @@
                   </div>
                 {:else}
                   <div class="level-item">
-                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>Pledge</button>
+                    <button class="mt-4 button is-primary is-outlined is-block is-medium" on:click={() => {pledgeActive = feature.nr}}>
+                     {#if feature.claimedAt}Challenge {/if}Pledge <span class="is-size-7">({fromWei(feature.amount)} eth/p)</span>
+                    </button>
                   </div>
                 {/if}
               </div>
