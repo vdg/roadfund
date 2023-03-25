@@ -39,6 +39,11 @@
         <a class="navbar-item" href="/about">About</a>
       </div>
       <div class="navbar-end">
+        {#if $signerAddress}
+        <div class="navbar-item">
+          <span class="tag is-white">{$chainData.name}</span>
+        </div>
+        {/if}
         <div class="navbar-item shadowed">
           {#if $signerAddress}
             {formatAddress($signerAddress)}
@@ -154,8 +159,6 @@
         color: #bbf;
         text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.3);
       }
-
-
     }
   }
 

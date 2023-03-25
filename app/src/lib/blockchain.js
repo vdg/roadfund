@@ -123,13 +123,26 @@ const createBlockchain = () => {
 
   const isSupported = (chainId) => !!Artifacts[chainId]
 
+  const switchChain = async (chainId) => {
+    try {
+      chainId = ethers.utils.hexStripZeros(ethers.utils.hexlify(chainId))
+      await evm.$provider.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId }]
+      })
+    } catch (e) {
+      console.log('failed to switch to network', chainId, e)
+    }
+  }
+
   return {
     connect,
     disconnect,
     handleRougeEvent,
     roadfund,
     rouge,
-    isSupported
+    isSupported,
+    switchChain
   }
 }
 
