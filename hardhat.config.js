@@ -20,7 +20,7 @@ dotenv.config({ path: '.server.env' })
 const fs = require('fs')
 
 const mnemonic = fs.readFileSync('env/.mnemonic').toString().trim()
-//const deployer = fs.readFileSync(".deployer").toString().trim()
+const deployer = fs.readFileSync('env/.deployer').toString().trim()
 
 module.exports = {
   solidity: {
@@ -34,13 +34,16 @@ module.exports = {
   },
   namedAccounts: {
     deployer: {
-      default: 0 // here this will by default take the first account as deployer
+      default: 0, // here this will by default take the first account as deployer
+      oeth: `privatekey://${deployer}`
     },
     RougeSingleton: {
-      default: '0x376438641eB95A31b3AA9BD5bAe4b635577BBE74'
+      default: '0x376438641eB95A31b3AA9BD5bAe4b635577BBE74',
+      oeth: '0x0a7f68446D0360ff1132d967C371a6DF08169bd5'
     },
     RougeProxyFactory: {
-      default: '0x9dA37D0256c0d0fEBD7C7bc677af301E4e960daB'
+      default: '0x9dA37D0256c0d0fEBD7C7bc677af301E4e960daB',
+      oeth: '0xA0D17b2b99bB9BE256c6091526a627B7bB1b6f25'
     }
   },
   networks: {
@@ -48,6 +51,11 @@ module.exports = {
     geth: {
       url: 'http://127.0.0.1:8545/',
       accounts: { mnemonic }
+    },
+    // main nets
+    oeth: {
+      // 10
+      url: `${process.env.OPTIMISM_RPC}`
     }
   }
 }
