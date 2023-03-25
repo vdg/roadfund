@@ -99,7 +99,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature A',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx1.wait()
 
@@ -107,7 +107,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature B',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx2.wait()
 
@@ -165,7 +165,7 @@ describe('Roadfund', function () {
       const rcpt = await tx.wait()
     })
 
-    it('creator close feature A (revert, cooling period)', async function () {
+    it('creator close feature A (revert, challenge duration)', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       await increaseTime('9m')
@@ -175,15 +175,16 @@ describe('Roadfund', function () {
       ).to.be.revertedWith('not time')
     })
 
-    it('creator close feature A (not contested)', async function () {
+    it('creator close feature A (not challenged)', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       await increaseTime('1m')
 
       expect((await roadfund.getInfos(roadmap.address)).open[0]).to.equal(true)
 
-      const tx = await roadfund.connect(creator).close(roadmap.address, 0)
-      const rcpt = await tx.wait()
+      await expect(() =>
+        roadfund.connect(creator).close(roadmap.address, 0)
+      ).to.changeEtherBalance(creator, expandToNDecimals(70, 15))
 
       expect((await roadfund.getInfos(roadmap.address)).open[0]).to.equal(false)
     })
@@ -201,7 +202,7 @@ describe('Roadfund', function () {
 
   // *********** *********** *********** *********** *********** ***********
 
-  describe('Using roadmap (claim unsuccessfully contested)', function () {
+  describe('Using roadmap (claim challenged but not successfully contested)', function () {
     let roadfund
     let roadmap
     let owner
@@ -217,7 +218,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature A',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx1.wait()
 
@@ -225,7 +226,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature B',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx2.wait()
 
@@ -278,7 +279,7 @@ describe('Roadfund', function () {
       const rcpt = await tx.wait()
     })
 
-    it('creator cannot re-claim before end of cooling period', async function () {
+    it('creator cannot re-claim before end of challenge duration', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       await expect(
@@ -298,7 +299,7 @@ describe('Roadfund', function () {
       expect(channels[1].totalAcquired).to.equal(102)
     })
 
-    it('creator close feature B (revert, not paying penanties)', async function () {
+    it('creator close feature B (revert, not paying penalties)', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       await increaseTime('10m')
@@ -315,9 +316,12 @@ describe('Roadfund', function () {
 
       await increaseTime('10m')
 
-      const tx = await roadfund
-        .connect(creator)
-        .close(roadmap.address, 1, { value: expandToNDecimals(3, 15) })
+      // expect penalties to be paid
+      await expect(() =>
+        roadfund
+          .connect(creator)
+          .close(roadmap.address, 1, { value: expandToNDecimals(3, 15) })
+      ).to.changeEtherBalance(owner, expandToNDecimals(3, 15))
     })
   })
 
@@ -339,7 +343,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature A',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx1.wait()
 
@@ -347,7 +351,7 @@ describe('Roadfund', function () {
         roadmap.address,
         'feature B',
         expandToNDecimals(1, 15), // 1 finney
-        60 * 10 // 10 minutes cooling period
+        60 * 10 // 10 minutes challenge duration
       )
       await tx2.wait()
 
@@ -444,7 +448,7 @@ describe('Roadfund', function () {
       const rcpt = await tx.wait()
     })
 
-    it('creator close feature B (wait another cooling period)', async function () {
+    it('creator close feature B (wait another challenge duration)', async function () {
       const [owner, creator] = await ethers.getSigners()
 
       await increaseTime('10m')

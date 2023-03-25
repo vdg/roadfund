@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 pragma solidity ^0.8.0;
 
-import 'hardhat/console.sol';
+//import 'hardhat/console.sol';
 
 import '@openzeppelin/contracts/access/Ownable.sol';
 
@@ -16,11 +16,11 @@ contract Roadfund is Ownable {
   address public _factory;
   address public _singleton;
 
-  // Minimum percentage to contest a feature claim
-  uint256 public constant CONTEST_LIMIT = 12;
+  // Percentage of challenge pledges to be given back as a penalty when closing a feature
+  uint256 public constant CHALLENGE_PENALTY = 150;
 
-  // Cooling pledges % to give back as penalty when closing a feature
-  uint256 public constant CONTEST_PENALTY = 150;
+  // limit for a substantially challenged feature to be considered contested
+  uint256 public constant CONTEST_LIMIT = 12;
 
   uint48 public constant NFT_LIMIT = ~uint48(0); // 281,474,976,710,655
   uint16 public constant CHANNEL_LIMIT = ~uint16(0); // 65,535
@@ -96,14 +96,15 @@ contract Roadfund is Ownable {
 
   // Mappings to store feature information
   mapping(Rouge => mapping(uint16 => string)) private _featureName;
-  mapping(Rouge => mapping(uint16 => uint256)) private _featureCooling;
+  mapping(Rouge => mapping(uint16 => uint256))
+    private _featureChallengeDuration;
 
   // Function to add a new feature to a roadmap (Rouge instance)
   function addFeature(
     Rouge rouge,
     string memory name,
     uint256 amount,
-    uint256 cooling //Rouge.Channel calldata channel
+    uint256 challenge //Rouge.Channel calldata channel
   ) public {
     (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
@@ -126,9 +127,9 @@ contract Roadfund is Ownable {
     // Grant the acquire authorization for the new feature
     grantFeature(rouge, uint16(channels.length), true);
 
-    // Store the feature name and cooling period
+    // Store the feature name and challenge duration
     _featureName[rouge][uint16(channels.length)] = name;
-    _featureCooling[rouge][uint16(channels.length)] = cooling;
+    _featureChallengeDuration[rouge][uint16(channels.length)] = challenge;
   }
 
   // Mappings to store pledge information
@@ -164,18 +165,18 @@ contract Roadfund is Ownable {
       'not creator'
     );
 
-    // Ensure the feature is not claimed or the cooling period has passed
+    // Ensure the feature is not claimed or the challenge duration has passed
     require(
       _claimedAt[rouge][channelId] == 0 ||
         block.timestamp - _claimedAt[rouge][channelId] >=
-        _featureCooling[rouge][channelId],
+        _featureChallengeDuration[rouge][channelId],
       'not claimable'
     );
 
     _claimedAt[rouge][channelId] = block.timestamp;
 
     if (_claimedThreshold[rouge][channelId] > 0) {
-      // raising threshold a bit so feature may be closed again, but new cooling period start and easier to re-contest
+      // raising threshold a bit so feature may be closed again, but new challenge duration start and easier to re-contest
       _claimedThreshold[rouge][channelId] =
         _claimedThreshold[rouge][channelId] +
         (_pledges[rouge][channelId] - _claimedThreshold[rouge][channelId]) /
@@ -192,35 +193,36 @@ contract Roadfund is Ownable {
       rouge.hasRole(_msgSender(), this.createRoadmap.selector, CHANNEL_LIMIT)
     );
 
-    // Ensure the feature is claimed and the cooling period has passed
+    // Ensure the feature is claimed and the challenge duration has passed
     require(_claimedAt[rouge][channelId] > 0, 'not claimed');
     require(
       block.timestamp - _claimedAt[rouge][channelId] >=
-        _featureCooling[rouge][channelId],
+        _featureChallengeDuration[rouge][channelId],
       'not time'
     );
 
-    uint16 coolingPledges = _pledges[rouge][channelId] -
+    uint16 challengePledges = _pledges[rouge][channelId] -
       _claimedThreshold[rouge][channelId];
 
-    console.log(
-      'coolingPledges = %s (%s%%)',
-      coolingPledges,
-      (100 * coolingPledges) / _pledges[rouge][channelId]
-    );
+    // console.log(
+    //   'challengePledges = %s (%s%%)',
+    //   challengePledges,
+    //   (100 * challengePledges) / _pledges[rouge][channelId]
+    // );
 
     // Refuse to close contested features
     require(
-      (100 * coolingPledges) / _pledges[rouge][channelId] < CONTEST_LIMIT,
+      (100 * challengePledges) / _pledges[rouge][channelId] < CONTEST_LIMIT,
       'contested'
     );
 
     (, Rouge.Channel[] memory channels, ) = rouge.getInfos();
 
-    // Require penalty payment for closing the feature if coolingPledges exist
+    // Require penalty payment for closing the feature if challengePledges exist
     require(
       msg.value >=
-        ((coolingPledges * CONTEST_PENALTY) / 100) * channels[channelId].amount,
+        ((challengePledges * CHALLENGE_PENALTY) / 100) *
+          channels[channelId].amount,
       'penalty unpaid'
     );
 
@@ -228,10 +230,6 @@ contract Roadfund is Ownable {
     if (msg.value > 0) {
       _penaltiesRecipient[rouge].sendValue(msg.value);
     }
-    console.log(
-      'amount per pledge for [%s] =  %s  ',
-      channels[channelId].amount
-    );
 
     // Withdraw funds to the message sender
     rouge.widthdraw(
@@ -243,7 +241,7 @@ contract Roadfund is Ownable {
     grantFeature(rouge, channelId, false);
   }
 
-  // Shortcut to get all local state for a roadmap
+  // Function to get all local state for a roadmap
   function getState(
     Rouge rouge,
     uint256 max
@@ -253,29 +251,25 @@ contract Roadfund is Ownable {
     returns (
       bool[] memory open,
       string[] memory names,
-      uint256[] memory cooling,
+      uint256[] memory challenge,
       uint256[] memory claimedAt,
       uint16[] memory claimedThreshold
     )
   {
     bool[] memory open_ = new bool[](max);
     string[] memory names_ = new string[](max);
-    uint256[] memory cooling_ = new uint256[](max);
+    uint256[] memory challenge_ = new uint256[](max);
     uint256[] memory at_ = new uint256[](max);
     uint16[] memory threshold_ = new uint16[](max);
 
     for (uint16 i = 0; i < max; i++) {
       open_[i] = rouge.isEnabled(rouge.acquire.selector, i);
       names_[i] = _featureName[rouge][i];
-      cooling_[i] = _claimedAt[rouge][i];
+      challenge_[i] = _claimedAt[rouge][i];
       at_[i] = _claimedAt[rouge][i];
       threshold_[i] = _claimedThreshold[rouge][i];
     }
-    open = open_;
-    names = names_;
-    cooling = cooling_;
-    claimedAt = at_;
-    claimedThreshold = threshold_;
+    return (open_, names_, challenge_, at_, threshold_);
   }
 
   // Shortcut to get all infos we need onchain - aggregate Rouge instances + Roadfund
@@ -291,7 +285,7 @@ contract Roadfund is Ownable {
       address penaltiesRecipient,
       bool[] memory open,
       string[] memory names,
-      uint256[] memory cooling,
+      uint256[] memory challenge,
       uint256[] memory claimedAt,
       uint16[] memory claimedThreshold
     )
@@ -300,7 +294,7 @@ contract Roadfund is Ownable {
     (uri, channels, ) = rouge.getInfos();
     penaltiesRecipient = _penaltiesRecipient[rouge];
 
-    (open, names, cooling, claimedAt, claimedThreshold) = getState(
+    (open, names, challenge, claimedAt, claimedThreshold) = getState(
       rouge,
       channels.length
     );
