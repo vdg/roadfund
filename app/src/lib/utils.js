@@ -22,6 +22,16 @@ export const fromWei = (s) => {
   return Math.round(utils.formatEther(s) * 1e5) / 1e5
 }
 
+export const setClipboard = (value) => {
+  const tempInput = document.createElement('input')
+  tempInput.style = 'position: absolute; left: -1000px; top: -1000px'
+  tempInput.value = value
+  document.body.appendChild(tempInput)
+  tempInput.select()
+  document.execCommand('copy')
+  document.body.removeChild(tempInput)
+}
+
 export const toWei = (s) => {
   let wei = utils.parseUnits((s + '').split(' ').join(''), 18)
   return wei

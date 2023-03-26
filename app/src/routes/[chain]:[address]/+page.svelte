@@ -27,6 +27,9 @@
   import Claim from '$components/Claim.svelte'
   import Close from '$components/Close.svelte'
   import Timer from '$components/Timer.svelte'
+  import Share from '$components/ShareButtons/index.svelte'
+  import ClipboardCopy from '$components/ClipboardCopy.svelte'
+  import Icon from '$components/Icon.svelte'
 
   export let data
   $: ({ chain, address } = data)
@@ -41,6 +44,8 @@
   let closeActive = 0
 
   const ended = {}
+
+  $: url = `http://roadfund.xyz//${$chainId}:${address}`
 
 </script>
 
@@ -57,8 +62,20 @@
       <Roadmap {address}   />
 
       <aside class="xmenu mt-4 is-flex is-flex-direction-row is-justify-content-space-around">
-        <button class="button is-primary is-inverted" on:click={() => {addActive = !addActive}}>Share</button>
-        <button class="button is-primary is-inverted " on:click={() => {addActive = !addActive}}>Copy</button>
+
+        <Share
+          let:api
+          {url}
+          title={url}>
+          {#if api}
+            <button class="button is-primary is-inverted" on:click={api}>Share</button>
+          {/if}
+        </Share>
+
+        <ClipboardCopy let:copy text={url} tootipLabel="copied!">
+          <button class="button is-primary is-inverted " on:click={copy}>Copy page URL <Icon name="Copy" /></button>
+        </ClipboardCopy>
+
       </aside>
 
       {#if $signerAddress === live.creator}

@@ -40,6 +40,7 @@
     "*.{js,css,md}": "prettier --write"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.7",
     "jsonwebtoken-esm": "^2.0.1"
   }
 }
