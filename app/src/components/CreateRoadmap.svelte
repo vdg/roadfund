@@ -41,12 +41,6 @@
     // "image": "https://techstory.in/wp-content/uploads/2021/08/Binance-announces-Gnosis-Listing-GNO-1024x640-1.jpg",
     // "home": "https://www.gnosis.io/",
     // "repository": "https://github.com/gnosis",
-  "name": "Optimism",
-  "image": "https://www.thecoinrepublic.com/wp-content/uploads/2022/09/op.jpg",
-  "description": "Optimism is a layer 2 scaling solution for Ethereum, utilizing optimistic rollups to increase transaction throughput and reduce gas fees.",
-  "home": "https://optimism.io"
-
-
   }
 
   const control = {

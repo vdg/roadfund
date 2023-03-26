@@ -39,7 +39,6 @@
       <div class="navbar-start shadowed">
         <a class="navbar-item" href="/help">Help</a>
         <a class="navbar-item" href="/about">About</a>
-        <a class="navbar-item" href="/press">Press</a>
       </div>
       <div class="navbar-end">
         {#if $signerAddress}
