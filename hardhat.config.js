@@ -43,14 +43,16 @@ module.exports = {
       oeth: '0x0a7f68446D0360ff1132d967C371a6DF08169bd5',
       'scr-alpha': '0x90713Dd7F05361317b2aBb5E5998b819099dDFaf',
       'taiko-a2': '0x90713Dd7F05361317b2aBb5E5998b819099dDFaf',
-      gno: '0x0a7f68446D0360ff1132d967C371a6DF08169bd5'
+      gno: '0x0a7f68446D0360ff1132d967C371a6DF08169bd5',
+      'testnet-zkEVM-mango': '0x90713Dd7F05361317b2aBb5E5998b819099dDFaf'
     },
     RougeProxyFactory: {
       default: '0x9dA37D0256c0d0fEBD7C7bc677af301E4e960daB',
       oeth: '0xA0D17b2b99bB9BE256c6091526a627B7bB1b6f25',
       'scr-alpha': '0xA6e904D88370D25e8Af3c6Eec7ecdD23a8d8BC83',
       'taiko-a2': '0xA6e904D88370D25e8Af3c6Eec7ecdD23a8d8BC83',
-      gno: '0xA0D17b2b99bB9BE256c6091526a627B7bB1b6f25'
+      gno: '0xA0D17b2b99bB9BE256c6091526a627B7bB1b6f25',
+      'testnet-zkEVM-mango': '0xA6e904D88370D25e8Af3c6Eec7ecdD23a8d8BC83'
     }
   },
   networks: {
