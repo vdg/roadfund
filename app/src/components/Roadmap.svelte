@@ -8,7 +8,6 @@
 
   export let address
 
-
   $: live = $roadmap[address] || {}
 
 </script>
@@ -17,7 +16,7 @@
   <div class="card" on:click>
     <div class="card-image">
       <figure class="image is-4by3">
-        <img src="https://unsplash.it/1200/960" alt="Placeholder image">
+        <img src={live.image} alt={live.name}>
       </figure>
     </div>
     <div class="card-content">
@@ -32,12 +31,13 @@
         </div>
       </div>
       <div class="content">
-        Lorem ipsum dolor
-        Phasellus nec iaculis mauris.
+        <h3>{live.name}</h3>
+
+        {live.description}
         <br>
         <a>by {formatAddress(live.creator)}</a>.
         <br>
-        <time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
+        <time datetime="2016-1-1" class="is-hidden">11:09 PM - 1 Jan 2016</time>
       </div>
     </div>
   </div>

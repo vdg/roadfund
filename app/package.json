@@ -12,12 +12,12 @@
     "format": "prettier --ignore-path .gitignore --plugin-search-dir . --write ."
   },
   "devDependencies": {
-    "contracts": "file:../",
     "@playwright/test": "^1.28.1",
     "@sveltejs/adapter-auto": "^2.0.0",
     "@sveltejs/adapter-static": "^2.0.1",
     "@sveltejs/kit": "^1.5.0",
     "bulma": "^0.9.4",
+    "contracts": "file:../",
     "eslint": "^8.28.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-svelte3": "^4.0.0",
@@ -28,7 +28,7 @@
     "prettier-plugin-svelte": "^2.8.1",
     "sass": "^1.59.3",
     "svelte": "^3.54.0",
-    "svelte-ethers-store": "^2.5.13",
+    "svelte-ethers-store": "^2.5.14",
     "svelte-preprocess": "^5.0.3",
     "vite": "^4.0.0",
     "vitest": "^0.25.3"
@@ -38,5 +38,8 @@
   "lint-staged": {
     "*.js": "eslint --cache --fix",
     "*.{js,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "jsonwebtoken-esm": "^2.0.1"
   }
 }

@@ -12,13 +12,15 @@
 
   import { toWei } from '$lib/utils.js'
   import blockchain from '$lib/blockchain.js'
+  import ipfs, { authed } from '$lib/ipfs.js'
 
   import roadmap from '$stores/roadmap.js'
 
   import { gradient } from '$lib/actions/gradient.js'
 
   import Modal from '$components/Modal.svelte'
-  //import TxButton from '$components/TxAction/Button.svelte'
+  import Authed from '$components/Authed.svelte'
+
   import TxAction from '$components/TxAction/index.svelte'
   import TxActionButton from '$components/TxAction/TxActionButton.svelte'
   import TxActionFeedback from '$components/TxAction/TxActionFeedback.svelte'
@@ -30,6 +32,11 @@
   let action
 
   let data = {
+    "name": "Gnosis Chain",
+    "description": "Gnosis Chain is a scalable, EVM-compatible, layer 2 blockchain built on top of Ethereum.",
+    "image": "https://techstory.in/wp-content/uploads/2021/08/Binance-announces-Gnosis-Listing-GNO-1024x640-1.jpg",
+    "home": "https://www.gnosis.io/",
+    "repository": "https://github.com/gnosis",
   }
 
   const control = {
@@ -45,10 +52,17 @@
   const penaltyRecipient = '0xEb439EED5642641968f9D8b52F2788e0F19B443B'
   const penaltyRecipientLabel= 'Eth Global'
 
-  export const create = () => {
+  export const create = async () => {
     control.error = {}
 
     if (Object.keys(control.error).length) return false
+
+    const { success, cids } = await ipfs.uploadData(data)
+
+    if (!success || !cids || cids.length !== 1)
+      throw new Error('springbok error')
+
+    console.log ( { success, cids } );
 
     const roadfund = blockchain.roadfund($chainId)
 
@@ -57,7 +71,7 @@
 
     return {
       call: roadfund.createRoadmap,
-      params: [ data.uri || '', penaltyRecipient ],
+      params: [ `ipfs://${cids[0].cid}`, penaltyRecipient ],
       onReceipt: (rcpt) => {
 
         const event = rcpt.events.filter((e) => e.topics[0] === topic)[0];
@@ -81,6 +95,12 @@
 
 </script>
 
+{#if active}
+<Authed
+  on:close={() => {
+           if (!$authed) active = false
+           }}>
+
 
 
 <Modal bind:this={modal} bind:active noCloseButton={true}>
@@ -88,22 +108,105 @@
     <section class="modal-card-body">
       <h2 class="title">Create a new roadmap</h2>
 
-      <h3 class="subtitle obscured mt-4">Add an IPFS URI for customizing your roadmap metadata (see help)</h3>
+      <h3 class="subtitle obscured mt-4">Your project's bold name</h3>
 
       <div class="column is-full">
         <div class="field">
-          <label for="label" class="label">IPFS URI</label>
+          <label for="label" class="label">Name</label>
           <p class="control">
             <input
-              id="uri"
+              id="name"
               class="input"
-              class:is-danger={control.error.uri}
+              class:is-danger={control.error.name}
                   type="text"
-              placeholder="ipfs://"
-              bind:value={data.uri} />
+              placeholder=""
+              bind:value={data.name} />
           </p>
-          {#if control.error.uri}<p class="help is-danger">
-            {control.error.uri}
+          {#if control.error.name}<p class="help is-danger">
+            {control.error.name}
+          </p>{/if}
+        </div>
+      </div>
+
+      <h3 class="subtitle obscured mt-4">
+        The quick and catchy project one liner<br />
+        (best is ~ 60 characters)</h3>
+
+      <div class="column is-full">
+        <div class="field">
+          <label for="label" class="label">Description</label>
+          <p class="control">
+            <input
+              id="description"
+              class="input"
+              class:is-danger={control.error.description}
+                  type="text"
+              placeholder=""
+              bind:value={data.description} />
+          </p>
+          {#if control.error.description}<p class="help is-danger">
+            {control.error.description}
+          </p>{/if}
+        </div>
+      </div>
+
+      <h3 class="subtitle obscured mt-4">Online destination to know more about the project</h3>
+
+      <div class="column is-full">
+        <div class="field">
+          <label for="label" class="label">Home URL</label>
+          <p class="control">
+            <input
+              id="home"
+              class="input"
+              class:is-danger={control.error.home}
+                  type="text"
+              placeholder=""
+              bind:value={data.home} />
+          </p>
+          {#if control.error.home}<p class="help is-danger">
+            {control.error.home}
+          </p>{/if}
+        </div>
+      </div>
+
+      <h3 class="subtitle obscured mt-4">Your captivating cover/logo art image
+        <br />(best 4:3 ratio)</h3>
+
+      <div class="column is-full">
+        <div class="field">
+          <label for="label" class="label">Image URL</label>
+          <p class="control">
+            <input
+              id="image"
+              class="input"
+              class:is-danger={control.error.image}
+                  type="text"
+              placeholder=""
+              bind:value={data.image} />
+          </p>
+          {#if control.error.image}<p class="help is-danger">
+            {control.error.image}
+          </p>{/if}
+        </div>
+      </div>
+
+      <h3 class="subtitle obscured mt-4">Want to link with your project's source code hideout?</h3>
+
+      <div class="column is-full">
+        <div class="field">
+          <label for="label" class="label">Repository URL</label>
+          <p class="control">
+            <input
+              id="repository"
+              class="input"
+              class:is-danger={control.error.repository}
+                  type="text"
+              placeholder=""
+              bind:value={data.repository} />
+          </p>
+          {#if control.error.repository}<p class="help is-danger">
+            {control.error.repository}
           </p>{/if}
         </div>
       </div>
@@ -130,6 +233,8 @@
 
   </div>
 </Modal>
+  </Authed>
+{/if}
 
 
 <style lang="scss">
@@ -138,6 +243,11 @@
 
   .modal-card-body, .modal-card-foot {
     background: transparent;
+  }
+
+  h3 {
+    margin-bottom: 0rem !important;
+
   }
 
 </style>

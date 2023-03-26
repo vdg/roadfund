@@ -7,6 +7,7 @@ import { proxied } from 'svelte-proxied-store'
 import { defaultEvmStores as evm, signer, chainId } from 'svelte-ethers-store'
 
 import blockchain from '$lib/blockchain.js'
+import ipfs from '$lib/ipfs.js'
 
 const createStore = () => {
   const lock = {}
@@ -89,6 +90,10 @@ const createStore = () => {
       claimedThreshold
     } = await roadfund.getInfos(address)
 
+    const meta = await ipfs.getJSON(uri)
+
+    console.log('DEBUG meta', meta)
+
     const features = channels.map(({ amount, totalAcquired }, i) => ({
       nr: i + 1,
       amount,
@@ -110,17 +115,17 @@ const createStore = () => {
         : 0
     }))
 
-    console.log(
-      `*** DEBUG *** data for ${address}`,
+    console.log(`*** DEBUG *** data for ${address}`, {
       uri,
       creator,
       penaltiesRecipient,
       features
-    )
+    })
 
     assign({
       [address]: {
         uri,
+        ...meta,
         creator,
         penaltiesRecipient,
         features,
