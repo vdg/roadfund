@@ -26,12 +26,15 @@
             <Identicon {address} />
           </figure>
         </div>
-        <div class="media-content">
+        <div class="media-content is-clipped">
           <a>{formatAddress( address )}</a>
+          {#if live.repository}
+          <a target="_blank" href={live.repository}><em>{live.repository}</em></a>
+          {/if}
         </div>
       </div>
       <div class="content">
-        <h3>{live.name}</h3>
+        <h3><a target="_blank" href={live.home}>{live.name}</a></h3>
 
         {live.description}
         <br>
