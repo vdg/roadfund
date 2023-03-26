@@ -15,7 +15,7 @@
 <div class="box">
   <div class="card" on:click>
     <div class="card-image">
-      <figure class="image is-4by3">
+      <figure class="image is-fullwidth is-4by3">
         <img src={live.image} alt={live.name}>
       </figure>
     </div>

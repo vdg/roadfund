@@ -56,8 +56,15 @@
 
       <Roadmap {address}   />
 
+      <aside class="xmenu mt-4 is-flex is-flex-direction-row is-justify-content-space-around">
+        <button class="button is-primary is-inverted" on:click={() => {addActive = !addActive}}>Share</button>
+        <button class="button is-primary is-inverted " on:click={() => {addActive = !addActive}}>Copy</button>
+      </aside>
+
       {#if $signerAddress === live.creator}
-        <button class="mt-4 button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
+        <aside class="xmenu mt-5 is-flex is-flex-direction-row is-justify-content-space-around">
+          <button class=" button is-primary is-block is-alt is-large" on:click={() => {addActive = !addActive}}>Add feature</button>
+        </aside>
       {/if}
 
       <aside class="menu mt-6 is-hidden">

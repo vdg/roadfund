@@ -20,8 +20,10 @@
   <div class="container">
     <div class="navbar-brand shadowed">
       <a class="navbar-item" href="/">
+        <span class="icon is-large mr-4">
+          <img src="/logo.png" alt="Roadfund" />
+        </span>
         <span class="is-size-6 has-text-weight-bold"><b>Roadfund</b></span>
-        <img width="112" height="28" class="is-hidden" />
       </a>
       <div class="navbar-burger burger" class:is-active={menu}         on:click={() => {
                                                                                 menu = !menu
@@ -37,6 +39,7 @@
       <div class="navbar-start shadowed">
         <a class="navbar-item" href="/help">Help</a>
         <a class="navbar-item" href="/about">About</a>
+        <a class="navbar-item" href="/press">Press</a>
       </div>
       <div class="navbar-end">
         {#if $signerAddress}
@@ -125,6 +128,12 @@
 
 <style lang="scss" global>
   @import '../scss/main.scss';
+
+  .navbar-item > .icon > img {
+    height: 3rem;
+    max-height: 3rem;
+  }
+
 
   body {
     background: linear-gradient(135deg, #000000, #ffffff);
